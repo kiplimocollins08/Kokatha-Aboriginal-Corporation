@@ -5,13 +5,15 @@ const { MembershipModel, LinkModel } = require('../models');
 const router = express.Router();
 
 
+// Post Method
+router.post('/post', (req, res) => {
+  res.send("Post API");
+})
+
 // Create Membership
 router.post('/create_member', async (req, res) => {
-  console.log("/create_member");
   const body = req.body;
-  console.log(body);
   const member = new MembershipModel({
-    account: body.account,
     first_name: body.first_name,
     last_name: body.last_name,
     single_name: body.single_name,
@@ -36,9 +38,8 @@ router.post('/create_member', async (req, res) => {
       message: err.message
     })
   }
-});
+})
 
-// Create Link
 router.post('/create_link/:member_id', async (req, res) => {
   const id = req.params.member_id;
   const body = req.body;
@@ -58,7 +59,7 @@ router.post('/create_link/:member_id', async (req, res) => {
   catch(error){
     res.status(400).json({message: error.message})
   }
-});
+})
 
 
 // Get all
@@ -71,20 +72,20 @@ router.get("/get_members", async (req, res) => {
       message: err.message
     })
   }
-});
+})
 
 
 // Get One
-router.get("/get_links/:id", async (req, res) => {
+router.get("/get_links/:member_id", async (req, res) => {
   const id = req.params.id;
   try {
-    const data = await MembershipModel.findById(id);
+    const data = await MembershipModel.find({});
     res.json(data);
   } catch (err) {
     res.status(500).json({
       message: err.message
     })
   }
-});
+})
 
 module.exports = router;
