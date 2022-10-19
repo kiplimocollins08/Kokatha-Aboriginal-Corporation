@@ -4,6 +4,17 @@ const { MembershipModel, LinkModel } = require('../models');
 
 const router = express.Router();
 
+router.get("/", async (req, res) => {
+  try {
+    const data = await MembershipModel.find();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({
+      message: err.message
+    })
+  }
+})
+
 // Get one member
 router.get("/id/:member_id", async (req, res) => {
   const id = req.params.member_id;
@@ -30,5 +41,6 @@ router.get("/approved", async (req, res) => {
     })
   }
 })
+
 
 module.exports = router

@@ -62,18 +62,6 @@ router.post('/create_link/:member_id', async (req, res) => {
 })
 
 
-// Get all
-router.get("/get_members", async (req, res) => {
-  try {
-    const data = await MembershipModel.find();
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({
-      message: err.message
-    })
-  }
-})
-
 
 // Get One
 router.get("/get_links/:member_id", async (req, res) => {

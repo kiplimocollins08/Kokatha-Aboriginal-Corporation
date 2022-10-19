@@ -96,25 +96,40 @@ export default class Membership extends React.Component {
 
   handleViewApplication(e) {
     const id = e.target.value;
+    const { members } = this.state;
 
-      var config = {
-        method: 'get',
-        url: `${BASE_URL}/api/membership/id/${id}`,
-        headers: { }
-      };
-      
-      axios(config)
-        .then((response) => {
-          console.log(JSON.stringify(response.data));
-          this.setState({
-            currentId: id,
-            currentFormData: response.data,
-            open: true,
-          })
+    for (let i = 0; i < this.state.members.length; i++) {
+      if (members[i].aid === id) {
+        this.setState({
+          currentId: id,
+          currentFormData: members[i].data,
+          open: true,
         })
-        .catch(function (error) {
-          alert("Error opening data");
-        });
+        return
+      }
+    }
+
+    var config = {
+      method: 'get',
+      url: `${BASE_URL}/api/membership/id/${id}`,
+      headers: { 
+        'Access-Control-Allow-Origin': '*'
+      },
+      crossDomain: true
+    };
+    
+    axios(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+        this.setState({
+          currentId: id,
+          currentFormData: response.data,
+          open: true,
+        })
+      })
+      .catch(function (error) {
+        alert("Error opening data");
+      });
   }
 
   handleOpen() {
@@ -135,13 +150,26 @@ export default class Membership extends React.Component {
     alert(id);
   }
 
-  handleLoadApplications() {
+  async handleLoadApplications() {
     this.setState({loading: true});
 
     const config = {
       method: 'get',
       url: `${BASE_URL}/api/membership/approved`,
+      headers: { 
+        'Access-Control-Allow-Origin': '*', // stein 
+      },
     };
+
+    const data = [{"_id":"631f375510e7ddcd8e9a0c73","first_name":"Key","last_name":"Peele","single_name":"Key","aka":"Keyl","mobile":"0718817287","email":"joe@hotmail.com","home_phone":"0985555222","work_phone":"","member_id":"00001","street_address":"Home Ground, Corner X, City Y","suburb":"Home Ground","state":"SA","dob":"1978-08-08T21:00:00.000Z","date_of_membership":"2002-12-31T21:00:00.000Z","approved":false,"__v":0},{"_id":"631f37b210e7ddcd8e9a0c75","first_name":"John","last_name":"Preston","single_name":"John","aka":"jp11","mobile":"071882121287","email":"jp@ton.com","home_phone":"04343555222","work_phone":"32323","member_id":"00002","street_address":"24 XY Street","suburb":"XY","state":"SP","dob":"1988-08-08T20:00:00.000Z","date_of_membership":"2003-01-04T21:00:00.000Z","approved":true,"__v":0}];
+    const res = []
+      for (let i = 0; i < data.length; i++) {
+        res.push(createData(i + 1, data[i], this.handleViewApplication, this.handleApproveApplication));
+      }
+      this.setState({
+        members: res
+      })
+
 
     axios(config)
     .then((response) => {
@@ -176,7 +204,79 @@ export default class Membership extends React.Component {
   >
     <Modal open={this.state.open} onClose={this.handleClose}>
       <Box sx={modalStyle}>
-        <ApplicationForm application_id={this.state.currentId} data={this.state.currentFormData}/>
+        <Grid container spacing={1}>
+          <Grid item xs={7}>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography variant="subtitle1">
+              Member Details
+            </Typography>
+            <ApplicationForm application_id={this.state.currentId} data={this.state.currentFormData}/>
+            </Box>
+          </Grid>
+          <Grid item xs={5}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', maxHeight: '100%' }}>
+              <Box sx={{ margin: 0, maxHeight: 200, minWidth: '100%', display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Typography variant="subtitle1">
+                  Finances
+                </Typography>
+                <Paper variant="outlined" sx={{ margin: 0, padding: 1, minWidth: 200}}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: '100%', minHeight: '100%', gap: 1 }}>
+                  
+                  <Grid container spacing={1}>
+                    <Grid item xs={8}>
+                    <TextField
+                      label="Add Amount"
+                      size="small"
+                      sx={{ maxWidth: "100%", width: 320 }}
+                      InputProps={{
+                        readOnly: false,
+                      }}
+                    />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Button variant="outlined" sx={{ minwidth: '100%' }}>
+                        Add
+                      </Button>
+                    </Grid>
+                  </Grid>
+                  <Grid container>
+                  <Grid item xs={6} spacing={1}>
+                    <TextField
+                      label="Balance"
+                      size="small"
+                      sx={{ maxWidth: "90%", width: 320, mr: 1 }}
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                    />
+                    </Grid>
+                    <Grid item xs={6}>
+                    <TextField
+                      label="Spent"
+                      size="small"
+                      sx={{ maxWidth: "90%", width: 320 }}
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                    />
+                    </Grid>
+                  </Grid>
+                  </Box>
+                </Paper>
+              </Box>
+              <Box sx={{ margin: 0, minHeight: 200, minWidth: '100%', maxHeight: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Typography variant="subtitle1">
+                  Health Applications
+                </Typography>
+                <Paper variant="outlined" sx={{ margin: 0, height: 350, maxHeight: '100%', minWidth: 200}}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: '100%', minHeight: '100%' }}>
+                    
+                  </Box>
+                </Paper>
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
       </Box>
     </Modal>
     <Paper
@@ -191,7 +291,37 @@ export default class Membership extends React.Component {
           borderRadius: 1,
         }}
     >
-
+      <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            minHeight: 500,
+          }}
+      >
+        {this.state.loading ? (
+                  <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: 450,
+                        m: 0,
+                      }}
+                  >
+                    <CircularProgress />
+                  </Box>
+              ) : (
+                  <StyledDataGrid
+                      rows={this.state.members}
+                      columns={dataColumnsMembers}
+                      pageSize={20}
+                      rowsPerPageOptions={[50]}
+                      disableSelectionOnClick
+                  />
+              )}
+        </Box>
         </Paper>
         </Box>
         )

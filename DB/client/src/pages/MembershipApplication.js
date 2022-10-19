@@ -109,7 +109,8 @@ class MembershipApplication extends React.Component {
       method: 'POST',
       url: `${BASE_URL}/api/create_member`,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
       },
       data: data
     };
@@ -169,7 +170,7 @@ class MembershipApplication extends React.Component {
                 }}
               >
                 <Typography variant="subtitle1" component="div">
-                  Membership Application
+                  Membership Details Form
                 </Typography>
 
                 {this.state.error ? (<Alert severity="error">Invalid Data</Alert>) : null }
@@ -197,6 +198,18 @@ class MembershipApplication extends React.Component {
                     </LocalizationProvider>
                   </Grid>
 
+                  <Grid item xs={12} md={6} sm={12} lg={6}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DesktopDatePicker 
+                        label="Date of Membership"
+                        id="date_of_membership"
+                        value={this.state.date_of_membership}
+                        onChange={this.handleUpdateDom}
+                        renderInput={(params) => <TextField {...params}  size="small"  sx={{ maxWidth: "100%", width: 320 }} />}
+                      /> 
+                    </LocalizationProvider>
+                  </Grid>
+                </Grid>
 
                 <Grid container spacing={1} sx={{ maxWidth: 700 }}>
                   <Grid item xs={12} md={6} sm={12} lg={6}>
@@ -211,7 +224,6 @@ class MembershipApplication extends React.Component {
                     </LoadingButton>
                   </Grid>
                 </Grid>
-
               </Box>
             </Paper>
           </Box>

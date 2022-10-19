@@ -59,6 +59,11 @@ const memberhipSchema = new mongoose.Schema({
   date_of_membership: {
     required: true,
     type: Date
+  },
+  account_balance: {
+    required: true,
+    default: 2000.,
+    type: Number
   }
 });
 

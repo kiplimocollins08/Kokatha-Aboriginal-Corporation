@@ -27,6 +27,8 @@ export const modalStyle = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 700,
+  minWidth: '90%',
+  maxHeight: '95%',
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -51,6 +53,7 @@ export function createData(id, data, handleView, handleApprove) {
     approved: data.approved,
     handleView: handleView,
     handleApprove: handleApprove,
+    data: data
   }
 }
 
@@ -119,6 +122,38 @@ const dataColumnsApplications = [
         ),
   },
 
+]
+
+const dataColumnsHealthApplications = [
+  {
+    field: 'id', headerName: 'ID', width: 10,
+  },
+  {
+    field: 'single_name', headerName: 'Single Name', width: 1, flex: 1,
+  },
+  {
+    field: 'dob', headerName: 'D.O.B', width: 1, flex: 1,
+  },
+  {
+    field: 'phone', headerName: 'Phone', width: 1, flex: 1,
+  },
+  {
+    field: 'address', headerName: 'Address', width: 1, flex: 1,
+  },
+  {
+    field: 'amount', headerName: 'Amount', width: 1, flex: 1,
+  },
+  {
+    field: 'reason', headerName: 'Reason', width: 1, flex: 1,
+  },
+  {
+    field: 'link', headerName: 'Link', width: 1, flex: 1,
+    renderCell: (parans) => (
+      <Button variant="contained" disableElevation>
+        Link
+      </Button>
+    )
+  }
 ]
 
 function titleCase(str) {
@@ -194,7 +229,19 @@ export default class Applications extends React.Component {
 
       open: false,
       currentId: null,
-      currentFormData: null
+      currentFormData: null,
+
+      healthApplications: [
+        {
+          'id': 1,
+          'single_name': "Joey",
+          'dob': '12/12/1971',
+          'phone': '0484848484',
+          'address': '12 Smith Street',
+          'amount': 1250,
+          'reason': 'Dental'
+        }
+      ]
     }
 
     this.handleLoadApplications = this.handleLoadApplications.bind(this);
@@ -203,6 +250,8 @@ export default class Applications extends React.Component {
 
     this.handleClose = this.handleClose.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
+
+
   }
 
   componentDidMount() {
@@ -329,8 +378,8 @@ export default class Applications extends React.Component {
                   </Box>
               ) : (
                   <StyledDataGrid
-                      rows={this.state.applications}
-                      columns={dataColumnsApplications}
+                      rows={this.state.healthApplications}
+                      columns={dataColumnsHealthApplications}
                       pageSize={20}
                       rowsPerPageOptions={[50]}
                       disableSelectionOnClick

@@ -73,6 +73,20 @@ class Login extends React.Component {
                   sx={{ width: '100%' }}
                 />
 
+                <TextField
+                  required
+                  label="Password"
+                  type="password"
+                  size="small"
+                  value={this.state.password}
+                  onChange={this.handleChangePassword}
+                  sx={{ width: '100%' }}
+                />
+
+                <Button variant="contained" disableElevation sx={{ width: '100%' }}>
+                  Login
+                </Button>
+
                 <Typography variant="caption" component="div" color="error">
                   Error
                 </Typography>

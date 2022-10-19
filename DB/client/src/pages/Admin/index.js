@@ -84,10 +84,8 @@ class AdminPage extends React.Component {
               onChange={handleTabChange}
               aria-label="game manager tabs"
             >
-              <Tab label="Applications" {...a11yProps(0)}/>
-              <Tab label="Memberships" {...a11yProps(1)}/>
-              <Tab label="Link Application" {...a11yProps(2)}/>
-              <Tab label="Finances" {...a11yProps(3)}/>
+              <Tab label="Health Applications" {...a11yProps(0)}/>
+              <Tab label="Members" {...a11yProps(1)}/>
             </Tabs>
           </Box>
           <TabPanel index={0} value={value}>
@@ -95,12 +93,6 @@ class AdminPage extends React.Component {
           </TabPanel>
           <TabPanel index={1} value={value}>
             <Membership />
-          </TabPanel>
-          <TabPanel index={2} value={value}>
-            Link
-          </TabPanel>
-          <TabPanel index={3} value={value}>
-            Financials
           </TabPanel>
           </Box>
         </Container>

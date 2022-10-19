@@ -3,8 +3,11 @@ import React from 'react';
 import { AppBar, Button, CssBaseline, IconButton, Toolbar, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { Outlet, useNavigate } from "react-router-dom";
+import { ThemeProvider } from '@mui/material/styles';
 
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+
+import { theme } from './Mtheme';
 
 function TopAppBar(props) {
   const { navigate } = props;
@@ -42,7 +45,7 @@ function TopAppBar(props) {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {props.title}
           </Typography>
-          <Button color="inherit" onClick={handleApplyPage}>Apply</Button>
+          <Button color="inherit" onClick={handleApplyPage}>Add Member</Button>
 
           <Button color="inherit" onClick={handleAdminPage}>Admin</Button>
         </Toolbar>
@@ -70,6 +73,7 @@ class AppComponent extends React.Component {
 
   render() {
     return (
+      <ThemeProvider theme={theme}>
       <React.Fragment>
           <CssBaseline />
           <Box
@@ -87,6 +91,7 @@ class AppComponent extends React.Component {
             <Outlet setTitle={this.handleSetTitle} />
           </Box>
       </React.Fragment>
+      </ThemeProvider>
     )
   }
 }
