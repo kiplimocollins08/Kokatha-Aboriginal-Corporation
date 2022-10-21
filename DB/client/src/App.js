@@ -28,6 +28,10 @@ function TopAppBar(props) {
     navigate("/admin");
   }
 
+  const handleAddHealthApplication = () => {
+    navigate("/health");
+  }
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" elevation={0}>
@@ -46,6 +50,8 @@ function TopAppBar(props) {
             {props.title}
           </Typography>
           <Button color="inherit" onClick={handleApplyPage}>Add Member</Button>
+
+          <Button color="inherit" onClick={handleAddHealthApplication}>Health Application</Button>
 
           <Button color="inherit" onClick={handleAdminPage}>Admin</Button>
         </Toolbar>

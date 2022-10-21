@@ -51,12 +51,16 @@ router.put("/link/:application_id", async (req, res) => {
   const id = req.params.application_id;
   
   try{
-    const data = await HealthApplicationModel.findOne({id: id});
+    const data = await HealthApplicationModel.findById(id);
+    console.log(data);
     const member = await MembershipModel.findById(data.member);
+
+    console.log(member);
 
     if (member.account_balance < data.amount) {
       res.status(400).json({
         "message": "Insufficient funds",
+        "balance": member.account_balance,
       })
       return
     }

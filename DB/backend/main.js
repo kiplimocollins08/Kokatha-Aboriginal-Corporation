@@ -13,6 +13,7 @@ mongoose.connect(mongo_uri);
 
 const db = mongoose.connection;
 const app = express();
+app.use(cors());
 
 
 db.on('error', (error) => console.log(error))
@@ -23,8 +24,6 @@ app.use(express.json());
 app.use(BASE_API, routes);
 app.use(`${BASE_API}/membership`, require('./routes/membership'));
 app.use(`${BASE_API}/health`, require('./routes/health'));
-
-app.use(cors());
 
 app.options("*", cors());
 

@@ -155,13 +155,13 @@ export default class Membership extends React.Component {
 
     const config = {
       method: 'get',
-      url: `${BASE_URL}/api/membership/approved`,
+      url: `${BASE_URL}/api/membership/`,
       headers: { 
         'Access-Control-Allow-Origin': '*', // stein 
       },
     };
 
-    const data = [{"_id":"631f375510e7ddcd8e9a0c73","first_name":"Key","last_name":"Peele","single_name":"Key","aka":"Keyl","mobile":"0718817287","email":"joe@hotmail.com","home_phone":"0985555222","work_phone":"","member_id":"00001","street_address":"Home Ground, Corner X, City Y","suburb":"Home Ground","state":"SA","dob":"1978-08-08T21:00:00.000Z","date_of_membership":"2002-12-31T21:00:00.000Z","approved":false,"__v":0},{"_id":"631f37b210e7ddcd8e9a0c75","first_name":"John","last_name":"Preston","single_name":"John","aka":"jp11","mobile":"071882121287","email":"jp@ton.com","home_phone":"04343555222","work_phone":"32323","member_id":"00002","street_address":"24 XY Street","suburb":"XY","state":"SP","dob":"1988-08-08T20:00:00.000Z","date_of_membership":"2003-01-04T21:00:00.000Z","approved":true,"__v":0}];
+    const data = []; //  [{"_id":"631f375510e7ddcd8e9a0c73","first_name":"Key","last_name":"Peele","single_name":"Key","aka":"Keyl","mobile":"0718817287","email":"joe@hotmail.com","home_phone":"0985555222","work_phone":"","member_id":"00001","street_address":"Home Ground, Corner X, City Y","suburb":"Home Ground","state":"SA","dob":"1978-08-08T21:00:00.000Z","date_of_membership":"2002-12-31T21:00:00.000Z","approved":false,"__v":0},{"_id":"631f37b210e7ddcd8e9a0c75","first_name":"John","last_name":"Preston","single_name":"John","aka":"jp11","mobile":"071882121287","email":"jp@ton.com","home_phone":"04343555222","work_phone":"32323","member_id":"00002","street_address":"24 XY Street","suburb":"XY","state":"SP","dob":"1988-08-08T20:00:00.000Z","date_of_membership":"2003-01-04T21:00:00.000Z","approved":true,"__v":0}];
     const res = []
       for (let i = 0; i < data.length; i++) {
         res.push(createData(i + 1, data[i], this.handleViewApplication, this.handleApproveApplication));

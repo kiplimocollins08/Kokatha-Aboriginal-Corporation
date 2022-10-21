@@ -29,38 +29,32 @@ function titleCase(str) {
 
 titleCase("I'm a little tea pot");
 
-class MembershipApplication extends React.Component {
+class HealthApplication extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      first_name: "",
-      last_name: "",
       single_name: "",
-      aka: "",
-      mobile: "",
-      email: "",
-      home_phone: "",
-      work_phone: "",
+      phone: "",
+      address: "",
       member_id: "",
-      street_address: "",
-      suburb: "",
-      state: "",
+      amount: 0,
+      application_reason: "",
+      application_self: true,
+      application_child: false,
+      childs_name: "",
       dob: dayjs(),
-      date_of_membership:  dayjs(),
 
-      form_fields: ["first_name",
-        "last_name",
+      form_fields: [
         "single_name",
-        "aka",
-        "mobile",
-        "email",
-        "home_phone",
-        "work_phone",
+        "phone",
+        "address",
         "member_id",
-        "street_address",
-        "suburb",
-        "state"
+        "amount",
+        // "application_child",
+        "application_reason",
+        // "application_self",
+        "childs_name",
       ],
 
       application_status: 0,
@@ -108,7 +102,7 @@ class MembershipApplication extends React.Component {
 
     const config = {
       method: 'POST',
-      url: `${BASE_URL}/api/create_member`,
+      url: `${BASE_URL}/api/health/apply/${this.state.member_id}`,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
@@ -171,7 +165,7 @@ class MembershipApplication extends React.Component {
                 }}
               >
                 <Typography variant="subtitle1" component="div">
-                  Membership Details Form
+                  Health Application
                 </Typography>
 
                 {this.state.error ? (<Alert severity="error">Invalid Data</Alert>) : null }
@@ -199,17 +193,6 @@ class MembershipApplication extends React.Component {
                     </LocalizationProvider>
                   </Grid>
 
-                  <Grid item xs={12} md={6} sm={12} lg={6}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DesktopDatePicker 
-                        label="Date of Membership"
-                        id="date_of_membership"
-                        value={this.state.date_of_membership}
-                        onChange={this.handleUpdateDom}
-                        renderInput={(params) => <TextField {...params}  size="small"  sx={{ maxWidth: "100%", width: 320 }} />}
-                      /> 
-                    </LocalizationProvider>
-                  </Grid>
                 </Grid>
 
                 <Grid container spacing={1} sx={{ maxWidth: 700 }}>
@@ -234,4 +217,4 @@ class MembershipApplication extends React.Component {
   }
 }
 
-export default withCookies(MembershipApplication);
+export default withCookies(HealthApplication);

@@ -57,6 +57,19 @@ export function createData(id, data, handleView, handleApprove) {
   }
 }
 
+export function createHealthData(id, data, handleView, handleApprove) {
+  return {
+    id: id,
+    single_name: data.single_name,
+    dob: data.dob,
+    phone: data.phone,
+    address: data.address,
+    amount: data.amount,
+    reason: data.application_reason,
+    link: data.reason,
+  }
+}
+
 const dataColumnsApplications = [
   {
     field: 'id',
@@ -180,7 +193,7 @@ export function ApplicationForm(props) {
 
   for (const [key, value] of Object.entries(data)) {
     itemList.push(
-      <Grid item xs={12} md={6} sm={6} lg={6}> { key != "dob" && key !== "date_of_membership" ?
+      <Grid item xs={12} md={6} sm={6} lg={6}> { key !== "dob" && key !== "date_of_membership" ?
         <TextField
           id={key}
           label={titleCase(key)}
@@ -231,17 +244,7 @@ export default class Applications extends React.Component {
       currentId: null,
       currentFormData: null,
 
-      healthApplications: [
-        {
-          'id': 1,
-          'single_name': "Joey",
-          'dob': '12/12/1971',
-          'phone': '0484848484',
-          'address': '12 Smith Street',
-          'amount': 1250,
-          'reason': 'Dental'
-        }
-      ]
+      healthApplications: []
     }
 
     this.handleLoadApplications = this.handleLoadApplications.bind(this);
@@ -304,7 +307,7 @@ export default class Applications extends React.Component {
 
     const config = {
       method: 'get',
-      url: `${BASE_URL}/api/get_members`,
+      url: `${BASE_URL}/api/health`,
     };
 
     axios(config)
@@ -312,7 +315,7 @@ export default class Applications extends React.Component {
       const data = response.data;
       const res = []
       for (let i = 0; i < data.length; i++) {
-        res.push(createData(i + 1, data[i], this.handleViewApplication, this.handleApproveApplication));
+        res.push(createHealthData(i + 1, data[i], this.handleViewApplication, this.handleApproveApplication));
       }
       this.setState({
         applications: res
@@ -378,7 +381,7 @@ export default class Applications extends React.Component {
                   </Box>
               ) : (
                   <StyledDataGrid
-                      rows={this.state.healthApplications}
+                      rows={this.state.applications}
                       columns={dataColumnsHealthApplications}
                       pageSize={20}
                       rowsPerPageOptions={[50]}
