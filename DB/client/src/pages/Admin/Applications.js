@@ -51,14 +51,16 @@ export function createData(id, data, handleView, handleApprove) {
     email: data.email,
     mobile: data.mobile,
     approved: data.approved,
+    balance: data.account_balance,
     handleView: handleView,
     handleApprove: handleApprove,
     data: data
   }
 }
 
-export function createHealthData(id, data, handleView, handleApprove) {
+export function createHealthData(id, data, handleLinkApplication) {
   return {
+    _id: data._id,
     id: id,
     single_name: data.single_name,
     dob: data.dob,
@@ -67,6 +69,7 @@ export function createHealthData(id, data, handleView, handleApprove) {
     amount: data.amount,
     reason: data.application_reason,
     link: data.reason,
+    handleLink: handleLinkApplication
   }
 }
 
@@ -161,8 +164,13 @@ const dataColumnsHealthApplications = [
   },
   {
     field: 'link', headerName: 'Link', width: 1, flex: 1,
-    renderCell: (parans) => (
-      <Button variant="contained" disableElevation>
+    renderCell: (params) => (
+      <Button 
+        variant="contained" disableElevation
+        onClick={params.row.handleLink}
+        value={params.row._id}
+
+      >
         Link
       </Button>
     )
@@ -254,7 +262,7 @@ export default class Applications extends React.Component {
     this.handleClose = this.handleClose.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
 
-
+    this.handleLinkApplication = this.handleLinkApplication.bind(this);
   }
 
   componentDidMount() {
@@ -284,6 +292,27 @@ export default class Applications extends React.Component {
         });
   }
 
+  handleLinkApplication(e) {
+    const id = e.target.value;
+    
+    var config = {
+      method: 'put',
+      url: `${BASE_URL}/api/health/link/${id}`,
+      headers: { }
+    };
+
+    axios(config)
+      .then((response) => {
+        alert("Success");
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        alert(error.response.data["message"]);
+      }).finally(() => {
+        this.handleLoadApplications();
+      })
+  }
+
   handleOpen() {
     this.setState({
       open: true
@@ -298,8 +327,7 @@ export default class Applications extends React.Component {
   }
 
   handleApproveApplication(e) {
-    const id = e.target.value;
-    alert(id);
+    
   }
 
   handleLoadApplications() {
@@ -315,7 +343,7 @@ export default class Applications extends React.Component {
       const data = response.data;
       const res = []
       for (let i = 0; i < data.length; i++) {
-        res.push(createHealthData(i + 1, data[i], this.handleViewApplication, this.handleApproveApplication));
+        res.push(createHealthData(i + 1, data[i], this.handleLinkApplication));
       }
       this.setState({
         applications: res

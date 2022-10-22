@@ -43,4 +43,39 @@ router.get("/approved", async (req, res) => {
 })
 
 
+router.put("/fund/:member_id", async (req, res) => {
+
+  function isNumeric(str) {
+    if (typeof str != "string") return false // we only process strings!  
+    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+           !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+  }
+
+  const m_id = req.params.member_id;
+  const body = req.body;
+  if (!body.amount || isNumeric(body.amount)) {
+    res.status(400).json({
+      "message": "invalid request. bad amount",
+    })
+    return
+  }
+
+  try {
+    const member = await MembershipModel.findOne({member_id: m_id}).orFail();
+    await MembershipModel.findOneAndUpdate({member_id: m_id}, {account_balance: member.account_balance + body.amount});
+
+    const member_new = await MembershipModel.findOne({member_id: m_id}).orFail();
+    res.status(200).json({
+      "message": "success",
+      "body": member_new
+    });
+
+  }catch(err) {
+    res.status(400).json({
+      "message": "no such member",
+      "err": err.message
+    })
+  }
+})
+
 module.exports = router

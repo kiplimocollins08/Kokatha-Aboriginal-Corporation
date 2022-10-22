@@ -51,7 +51,7 @@ function TopAppBar(props) {
           </Typography>
           <Button color="inherit" onClick={handleApplyPage}>Add Member</Button>
 
-          <Button color="inherit" onClick={handleAddHealthApplication}>Health Application</Button>
+          <Button color="inherit" onClick={handleAddHealthApplication}>Add Health Application</Button>
 
           <Button color="inherit" onClick={handleAdminPage}>Admin</Button>
         </Toolbar>

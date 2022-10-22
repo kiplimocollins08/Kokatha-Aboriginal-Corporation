@@ -29,6 +29,12 @@ const dataColumnsMembers = [
     width: 10,
   },
   {
+    field: 'aid',
+    headerName: 'Member ID',
+    width: 150,
+    flex: 1,
+  },
+  {
     field: 'name',
     headerName: "Name",
     width: 200,
@@ -47,6 +53,12 @@ const dataColumnsMembers = [
     flex: 1,
   },
   {
+    field: 'balance',
+    header: 'Balance',
+    width: "150",
+    flex: 1,
+  },
+  {
     field: "action",
     headerName: "Actions",
     minWidth: 150,
@@ -54,20 +66,18 @@ const dataColumnsMembers = [
     renderCell: (params) => (
 
       <Box sx={{display: 'flex', flexDirection: 'row', gap: 1}}>
-         <Button
+        <Button
          variant="contained"
          disableElevation
          size="small"
          textSizeSmall
          value={params.row.aid}
-         onClick={params.row.handleView}
-     >
-       View
-     </Button>
+         onClick={params.row.handleView}>
+          View
+        </Button>
      </Box>
         ),
   },
-
 ]
 
 export default class Membership extends React.Component {
@@ -80,7 +90,9 @@ export default class Membership extends React.Component {
 
       open: false,
       currentId: null,
-      currentFormData: null
+      currentFormData: null,
+
+      add_amount: 1500,
     }
 
     this.handleLoadApplications = this.handleLoadApplications.bind(this);
@@ -88,6 +100,9 @@ export default class Membership extends React.Component {
 
     this.handleClose = this.handleClose.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
+
+    this.handleSubmitAmount = this.handleSubmitAmount.bind(this);
+    this.handleChangeAmount = this.handleChangeAmount.bind(this);
   }
 
   componentDidMount() {
@@ -168,8 +183,20 @@ export default class Membership extends React.Component {
       }
       this.setState({
         members: res
-      })
+      }, () => {
 
+        if (this.state.currentId) {
+          for (let i = 0; i < this.state.members.length; i++) {
+            if (this.state.members[i].aid === this.state.currentId) {
+              this.setState({
+                currentFormData: this.state.members[i].data,
+                open: true,
+              })
+              return
+            }
+          }
+        }
+      })
 
     axios(config)
     .then((response) => {
@@ -187,6 +214,42 @@ export default class Membership extends React.Component {
       console.log(error);
     }).finally(() => {
       this.setState({loading: false});
+    })
+  }
+
+  handleChangeAmount(e) {
+    console.log("Change");
+    console.log(e.target.value);
+    // this.setState({
+    //   add_amount: e.target.value
+    // })
+  }
+
+  handleSubmitAmount() {
+    var data = {
+      amount: this.state.add_amount
+    };
+
+    const id = this.state.currentFormData ? this.state.currentFormData.member_id : null;
+
+    var config = {
+      method: 'put',
+      url: `${BASE_URL}/api/membership/fund/${id}`,
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : data
+    };
+    
+    axios(config)
+    .then(function (response) {
+      alert("Success");
+    })
+    .catch(function (error) {
+      console.log(error);
+      alert(error.response.data["message"]);
+    }).finally(() => {
+      this.handleLoadApplications();
     })
   }
  
@@ -224,17 +287,23 @@ export default class Membership extends React.Component {
                   
                   <Grid container spacing={1}>
                     <Grid item xs={8}>
-                    <TextField
-                      label="Add Amount"
-                      size="small"
-                      sx={{ maxWidth: "100%", width: 320 }}
-                      InputProps={{
-                        readOnly: false,
-                      }}
-                    />
+                      <TextField
+                        label="Add Amount"
+                        size="small"
+                        value={this.state.add_amount}
+                        onClick={this.handleChangeAmount}
+                        sx={{ maxWidth: "100%", width: 320 }}
+                        InputProps={{
+                          readOnly: false,
+                        }}
+                      />
                     </Grid>
                     <Grid item xs={4}>
-                      <Button variant="outlined" sx={{ minwidth: '100%' }}>
+                      <Button 
+                        variant="outlined" 
+                        sx={{ minwidth: '100%' }}
+                        onClick={this.handleSubmitAmount}
+                        >
                         Add
                       </Button>
                     </Grid>
@@ -244,6 +313,7 @@ export default class Membership extends React.Component {
                     <TextField
                       label="Balance"
                       size="small"
+                      value={this.state.currentFormData ? this.state.currentFormData.account_balance : null}
                       sx={{ maxWidth: "90%", width: 320, mr: 1 }}
                       InputProps={{
                         readOnly: true,

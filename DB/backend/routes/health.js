@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const data = await HealthApplicationModel.find();
+    const data = await HealthApplicationModel.find({linked: false});
     res.json(data);
   } catch (err) {
     res.status(500).json({
@@ -65,8 +65,8 @@ router.put("/link/:application_id", async (req, res) => {
       return
     }
 
-    await HealthApplicationModel.findOneAndUpdate({id: id}, {linked: true});
-    await MembershipModel.findOneAndUpdate({id: member.id}, {account_balance: member.account_balance - data.amount});
+    await HealthApplicationModel.findOneAndUpdate({_id: data._id}, {linked: true});
+    await MembershipModel.findOneAndUpdate({_id: member._id}, {account_balance: member.account_balance - data.amount});
 
     res.status(200).json({message: "success"});
   }catch(error) {
