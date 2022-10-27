@@ -1,10 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import {Box, Tab, Tabs, Typography, Container} from "@mui/material";
-import {useNavigate} from "react-router-dom";
+import { Box, Tab, Tabs, Typography, Container } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
-import Applications from './Applications';
-import Membership from './Memberships';
+import Applications from "./Applications";
+import Membership from "./Memberships";
+import AdminPanel from "./AdminPanel";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -13,7 +14,7 @@ function TabPanel(props) {
       <div
           role="tabpanel"
           hidden={value !== index}
-          id={`game-manager-tabpanel-${index}`}
+          id={`admin-tabpanel-${index}`}
           {...other}
       >
         {value === index && (
@@ -29,14 +30,14 @@ function TabPanel(props) {
 TabPanel.propTypes = {
   children: PropTypes.node,
   index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired
+  value: PropTypes.number.isRequired,
 };
 
 function a11yProps(index) {
   return {
-    id: `game-manager-tab-${index}`,
-    'aria-controls': `game-manager-tabpanel-${index}`
-  }
+    id: `admin-tab-${index}`,
+    "aria-controls": `admin-tabpanel-${index}`,
+  };
 }
 
 class AdminPage extends React.Component {
@@ -44,16 +45,16 @@ class AdminPage extends React.Component {
     super(props);
 
     this.state = {
-      value: 0
-    }
+      value: 0,
+    };
 
     this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(newValue) {
     this.setState({
-      value: newValue
-    })
+      value: newValue,
+    });
   }
 
   render() {
@@ -61,46 +62,53 @@ class AdminPage extends React.Component {
 
     const handleTabChange = (e, newValue) => {
       this.handleChange(newValue);
-    }
+    };
 
     return (
-      <Box sx={{p: 1}}>
-          <Container>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                width: '100%'
-              }}
-            >
+      <Box sx={{ p: 1, width: '100%' }}>
+        <Container>
           <Box
             sx={{
-              borderBottom: 1,
-              borderColor: 'divider'
+              display: "flex",
+              flexDirection: "column",
+              width: '100%'
             }}
           >
-            <Tabs
+            <Box
+              sx={{
+                borderBottom: 1,
+                borderColor: "divider",
+              }}
+            >
+             <Tabs
               value={value}
               onChange={handleTabChange}
               aria-label="game manager tabs"
             >
-              <Tab label="Health Applications" {...a11yProps(0)}/>
-              <Tab label="Members" {...a11yProps(1)}/>
-            </Tabs>
-          </Box>
-          <TabPanel index={0} value={value}>
-            <Applications />
-          </TabPanel>
-          <TabPanel index={1} value={value}>
-            <Membership />
-          </TabPanel>
+                <Tab label="Panel" {...a11yProps(0)} />
+                <Tab label="Health Applications" {...a11yProps(1)} />
+                <Tab label="Members" {...a11yProps(2)} />
+              </Tabs>
+
+              </Box>
+
+              <TabPanel index={0} value={value}>
+                <AdminPanel />
+              </TabPanel>
+              <TabPanel index={1} value={value}>
+                <Applications />
+              </TabPanel>
+              <TabPanel index={2} value={value}>
+                <Membership />
+              </TabPanel>
+    
           </Box>
         </Container>
       </Box>
-    )
+    );
   }
 }
 
 export default function Admin(props) {
-  return <AdminPage {...props} />
+  return <AdminPage {...props} />;
 }

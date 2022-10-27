@@ -8,6 +8,11 @@ const healthApplicationNewSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'Membership',
   },
+  name: {
+    required: true,
+    default: "-",
+    type: String,
+  },
   dob: {
     required: true,
     type: Date

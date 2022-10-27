@@ -62,12 +62,12 @@ export function createHealthData(id, data, handleLinkApplication) {
   return {
     _id: data._id,
     id: id,
-    single_name: data.single_name,
+    single_name: data.name,
     dob: data.dob,
     phone: data.phone,
     address: data.address,
     amount: data.amount,
-    reason: data.application_reason,
+    reason: data.reason,
     link: data.reason,
     handleLink: handleLinkApplication
   }
@@ -209,7 +209,7 @@ export function ApplicationForm(props) {
           size="small"
           sx={{ maxWidth: "100%", width: 320 }}
           InputProps={{
-            readOnly: true,
+            readOnly: false,
           }}
         />
 
@@ -222,7 +222,7 @@ export function ApplicationForm(props) {
            onChange={(f) => f}
            readOnly={true}
           renderInput={(params) => <TextField {...params}  size="small"  InputProps={{
-            readOnly: true,
+            readOnly: false,
           }}  sx={{ maxWidth: "100%", width: 320 }} />}
         /> 
       </LocalizationProvider>
@@ -366,9 +366,16 @@ export default class Applications extends React.Component {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        // maxWidth: 700s
+        minWidth: 700,
+        width: 1000
       }}
   >
+     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, m: 1 }}>
+        <Typography variant="h5" component="div" gutterBottom>
+          Health Applications
+        </Typography>
+      </Box>
+
     <Modal open={this.state.open} onClose={this.handleClose}>
       <Box sx={modalStyle}>
         <ApplicationForm application_id={this.state.currentId} data={this.state.currentFormData}/>
