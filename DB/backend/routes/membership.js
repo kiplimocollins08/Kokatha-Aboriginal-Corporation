@@ -2,6 +2,8 @@ const express = require('express');
 const fs = require("fs");
 const path = require("path");
 
+const csv = require("csvtojson");
+
 const { parse } = require("csv-parse");
 
 const { MembershipModel, LinkModel } = require('../models');
@@ -117,7 +119,7 @@ router.post("/upload", async (req, res) => {
   const file_path = path.resolve("extras/members.csv");
   console.log(file_path);
 
-  await members_file.mv(file_path, (err) => {
+  await members_file.mv(file_path, async (err) => {
     if (err) {
       return res.status(500).send({
         "messaged": "failed",
@@ -125,12 +127,31 @@ router.post("/upload", async (req, res) => {
       })
     }
 
+    csv({
+      noHeader: false,
+      output: "json"
+    })
+      .fromFile(file_path)
+      .then(async (data) => {
+        for (let i = 0; i < data.length; i++) {
+          const obj = data[i];
 
-    fs.createReadStream(file_path)
-      .pipe(parse({ delimiter: ",", from_line: 2 }))
-        .on("data", function (row) {
-          console.log(row);
-        })
+          const member = new MembershipModel({...obj});
+
+          try {
+            const saved = await member.save();
+            console.log("Success");
+            console.log(saved);
+          } catch(err) {
+            console.log("Failed");
+            console.log(err);
+          }
+
+          console.log(obj);
+        }
+      })
+
+
     res.status(201).json({
       "message": "success"
     })

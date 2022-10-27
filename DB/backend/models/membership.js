@@ -23,7 +23,8 @@ const memberhipSchema = new mongoose.Schema({
   },
   email: {
     required: true,
-    type: String
+    type: String,
+    unique: true
   },
   home_phone: {
     required: true,

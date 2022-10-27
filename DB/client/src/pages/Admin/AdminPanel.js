@@ -18,6 +18,8 @@ import { LoadingButton } from '@mui/lab';
 
 import { BASE_URL } from '../../config';
 
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+
 export default class AdminPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -25,10 +27,47 @@ export default class AdminPanel extends React.Component {
 
     this.state = {
       update_amount: 1500,
-      loading_update_amount: false
+      loading_update_amount: false,
+
+      uploading_members: false,
+
+
+      members_file: null,
+      health_file: null,
     }
 
     this.handleUpdateAmount = this.handleUpdateAmount.bind(this);
+    this.handleMembersFileUpload = this.handleMembersFileUpload.bind(this);
+  }
+
+  handleMembersFileUpload(e) {
+    if (!e.target.files) {
+      return
+    }
+
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("members", file);
+
+    const options = {
+      method: 'POST',
+      url: `${BASE_URL}/api/membership/upload`,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
+      data: formData
+    }
+
+    axios.request(options).then((response) => {
+      alert("Uploaded Successfully");
+    }).catch((error) => {
+      alert("Failed to upload");
+      console.log(error.response.data);
+    }).finally(() => {
+      this.setState({
+        uploading_members: false
+      })
+    })
   }
 
   handleUpdateAmount() {
@@ -106,10 +145,18 @@ export default class AdminPanel extends React.Component {
             </Typography>
 
             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+
+              <LoadingButton
+                loading={this.state.uploading_members}
+                variant="contained"
+                component="label"
+                startIcon={<UploadFileIcon />}
+                disableElevation
+              >
+                Upload Profile
+                <input type="file" hidden accept=".csv" onChange={this.handleMembersFileUpload}/>
+              </LoadingButton>
             
-              <Button variant="contained" disableElevation>
-                Upload Existing Members
-              </Button>
             </Box>
             <Divider />
           </Box>
