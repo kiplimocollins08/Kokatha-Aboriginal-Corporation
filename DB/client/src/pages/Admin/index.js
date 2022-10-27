@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import Applications from "./Applications";
 import Membership from "./Memberships";
 import AdminPanel from "./AdminPanel";
+import { Finance } from "./Finance";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -88,6 +89,7 @@ class AdminPage extends React.Component {
                 <Tab label="Panel" {...a11yProps(0)} />
                 <Tab label="Health Applications" {...a11yProps(1)} />
                 <Tab label="Members" {...a11yProps(2)} />
+                <Tab label="Finance" {...a11yProps(3)} />
               </Tabs>
 
               </Box>
@@ -101,7 +103,9 @@ class AdminPage extends React.Component {
               <TabPanel index={2} value={value}>
                 <Membership />
               </TabPanel>
-    
+              <TabPanel index={3} value={value}>
+                <Finance />
+              </TabPanel>
           </Box>
         </Container>
       </Box>

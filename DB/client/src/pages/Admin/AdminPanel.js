@@ -16,9 +16,50 @@ import Box from "@mui/material/Box";
 import axios from 'axios';
 import { LoadingButton } from '@mui/lab';
 
+import { BASE_URL } from '../../config';
+
 export default class AdminPanel extends React.Component {
   constructor(props) {
     super(props);
+
+
+    this.state = {
+      update_amount: 1500,
+      loading_update_amount: false
+    }
+
+    this.handleUpdateAmount = this.handleUpdateAmount.bind(this);
+  }
+
+  handleUpdateAmount() {
+    this.setState({
+      loading_update_amount: true
+    })
+
+    var config = {
+      method: 'put',
+      url: `${BASE_URL}/api/membership/fund/`,
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : {
+        "amount": this.state.update_amount
+      }
+    };
+
+
+    axios(config)
+      .then(function (response) {
+        alert("Success");
+      })
+      .catch(function (error) {
+        alert("Failed");
+      }).finally(() => {
+        this.setState({
+          loading_update_amount: false
+        })
+      })
+
   }
 
   render() {
@@ -41,7 +82,7 @@ export default class AdminPanel extends React.Component {
               <TextField
                 id="tx_fund_amount"
                 label="Amount"
-                value={1000}
+                value={this.state.update_amount}
                 size="small"
                 sx={{ maxWidth: "100%", width: 320 }}
                 InputProps={{
@@ -51,6 +92,8 @@ export default class AdminPanel extends React.Component {
 
               <LoadingButton 
                 variant="contained"
+                loading={this.state.loading_update_amount}
+                onClick={this.handleUpdateAmount}
                 disableElevation>
                 Fund Accounts
               </LoadingButton>
@@ -65,7 +108,7 @@ export default class AdminPanel extends React.Component {
             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
             
               <Button variant="contained" disableElevation>
-                Fund Accounts
+                Upload Existing Members
               </Button>
             </Box>
             <Divider />

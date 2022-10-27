@@ -4,6 +4,11 @@ const { MembershipModel, LinkModel } = require('../models');
 
 const router = express.Router();
 
+function isNumeric(str) {
+  if (typeof str != "string") return false;
+  return !isNaN(str) && !isNaN(parseFloat(str));
+}
+
 router.get("/", async (req, res) => {
   try {
     const data = await MembershipModel.find();
@@ -44,13 +49,6 @@ router.get("/approved", async (req, res) => {
 
 
 router.put("/fund/:member_id", async (req, res) => {
-
-  function isNumeric(str) {
-    if (typeof str != "string") return false // we only process strings!  
-    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-           !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
-  }
-
   const m_id = req.params.member_id;
   const body = req.body;
   if (!body.amount || isNumeric(body.amount)) {
@@ -76,6 +74,30 @@ router.put("/fund/:member_id", async (req, res) => {
       "err": err.message
     })
   }
+})
+
+
+router.put("/fund/", async (req, res) => {
+  const body = req.body;
+  if (!body.amount || isNumeric(body.amount)) {
+    res.status(400).json({
+      "message": "invalid request. bad amount",
+    })
+    return
+  }
+
+  await MembershipModel.updateMany(
+    {},
+    {
+      $inc: {
+        account_balance: body.amount
+      }
+    }
+  ).orFail()
+
+  res.status(200).json({
+    "message": "success"
+  })
 })
 
 
