@@ -62,7 +62,7 @@ export function createHealthData(id, data, handleLinkApplication) {
   return {
     _id: data._id,
     id: id,
-    single_name: data.name,
+    name: data.name,
     dob: data.dob,
     phone: data.phone,
     address: data.address,
@@ -145,7 +145,7 @@ const dataColumnsHealthApplications = [
     field: 'id', headerName: 'ID', width: 10,
   },
   {
-    field: 'single_name', headerName: 'Single Name', width: 1, flex: 1,
+    field: 'name', headerName: 'Name', width: 1, flex: 1,
   },
   {
     field: 'dob', headerName: 'D.O.B', width: 1, flex: 1,
