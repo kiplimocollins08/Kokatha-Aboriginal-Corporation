@@ -4,6 +4,8 @@ const { MembershipModel, HealthApplicationModel } = require('../models');
 
 const router = express.Router();
 
+const mail = require('../utils/mail');
+
 router.get("/", async (req, res) => {
   try {
     const data = await HealthApplicationModel.find({linked: false});
@@ -112,6 +114,24 @@ router.put("/link/:application_id", async (req, res) => {
     res.status(200).json({message: "success"});
   }catch(error) {
     res.status(400).json({message: error.message})
+  }
+})
+
+
+router.get("/mail/", async (req, res) => {
+  try {
+    const res = await mail.sendEmail("francismuti2000@gmail.com", "hello", "hello");
+    
+
+    res.status(200).json({
+      "message": "success",
+      "info": res
+    })
+  } catch(err) {
+    res.status(505).json({
+      "message": "fail",
+      "info": err
+    })
   }
 })
 

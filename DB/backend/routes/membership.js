@@ -1,4 +1,8 @@
 const express = require('express');
+const fs = require("fs");
+const path = require("path");
+
+const { parse } = require("csv-parse");
 
 const { MembershipModel, LinkModel } = require('../models');
 
@@ -100,6 +104,38 @@ router.put("/fund/", async (req, res) => {
   })
 })
 
+
+router.post("/upload", async (req, res) => {
+  if (!req.files || Object.keys(req.files).length === 0) {
+    res.status(400).send('No files were uploaded.');
+    return;
+  }
+
+  const members_file = req.files.members;
+
+
+  const file_path = path.resolve("extras/members.csv");
+  console.log(file_path);
+
+  await members_file.mv(file_path, (err) => {
+    if (err) {
+      return res.status(500).send({
+        "messaged": "failed",
+        "info": err
+      })
+    }
+
+
+    fs.createReadStream(file_path)
+      .pipe(parse({ delimiter: ",", from_line: 2 }))
+        .on("data", function (row) {
+          console.log(row);
+        })
+    res.status(201).json({
+      "message": "success"
+    })
+  })
+})
 
 
 module.exports = router

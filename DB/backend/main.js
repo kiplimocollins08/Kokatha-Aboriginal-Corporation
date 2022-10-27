@@ -2,6 +2,8 @@ require('dotenv').config()
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const fileUpload = require('express-fileupload');
+
 
 const routes = require('./routes');
 
@@ -14,6 +16,10 @@ mongoose.connect(mongo_uri);
 const db = mongoose.connection;
 const app = express();
 app.use(cors());
+
+app.use(fileUpload({
+  limits: { fileSize: 50 * 1024 * 1024 },
+}));
 
 
 db.on('error', (error) => console.log(error))
