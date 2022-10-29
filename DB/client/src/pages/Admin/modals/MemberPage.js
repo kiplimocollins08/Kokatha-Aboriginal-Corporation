@@ -47,7 +47,6 @@ function formatDate(date) {
   if (!date) return "None";
   const d = new Date(date);
   var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes();
-  // console.log(d);
   return d.toLocaleDateString("en-UK");
 }
 

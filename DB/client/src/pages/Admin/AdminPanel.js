@@ -113,7 +113,7 @@ export default class AdminPanel extends React.Component {
           <Divider />
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, m: 1 }}>
-            <Typography>
+            {/* <Typography>
               Fund All Members
             </Typography>
 
@@ -136,8 +136,7 @@ export default class AdminPanel extends React.Component {
                 disableElevation>
                 Fund Accounts
               </LoadingButton>
-            </Box>
-            <Divider />
+            </Box> */}
 
 
             <Typography>

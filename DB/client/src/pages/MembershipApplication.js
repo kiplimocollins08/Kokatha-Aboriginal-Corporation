@@ -34,13 +34,9 @@ class MembershipApplication extends React.Component {
     super(props);
 
     this.state = {
-      first_name: "",
-      last_name: "",
-      single_name: "",
-      aka: "",
+      name: "",
       mobile: "",
       email: "",
-      home_phone: "",
       work_phone: "",
       member_id: "",
       street_address: "",
@@ -49,10 +45,8 @@ class MembershipApplication extends React.Component {
       dob: dayjs(),
       date_of_membership:  dayjs(),
 
-      form_fields: ["first_name",
-        "last_name",
-        "single_name",
-        "aka",
+      form_fields: [
+        "name",
         "mobile",
         "email",
         "home_phone",
@@ -63,7 +57,7 @@ class MembershipApplication extends React.Component {
         "state"
       ],
 
-      application_status: 0,
+      application_status: 1,
       application_message: "Fill all forms",
       loading: false,
     };

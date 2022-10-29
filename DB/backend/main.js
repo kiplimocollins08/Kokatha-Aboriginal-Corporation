@@ -30,6 +30,8 @@ app.use(express.json());
 app.use(BASE_API, routes);
 app.use(`${BASE_API}/membership`, require('./routes/membership'));
 app.use(`${BASE_API}/health`, require('./routes/health'));
+app.use(`${BASE_API}/finance`, require('./routes/financials'));
+
 
 app.options("*", cors());
 

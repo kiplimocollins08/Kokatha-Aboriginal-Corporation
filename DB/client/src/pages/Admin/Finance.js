@@ -1,47 +1,258 @@
-import React from 'react';
+import React from "react";
 
 import {
-  CircularProgress, Paper,
+  CircularProgress,
+  Paper,
   Typography,
   Button,
   styled,
   Modal,
   Grid,
   TextField,
-  Divider
+  Divider,
 } from "@mui/material";
 
 import Box from "@mui/material/Box";
 
-import axios from 'axios';
-import { LoadingButton } from '@mui/lab';
+import axios from "axios";
+import { LoadingButton } from "@mui/lab";
+
+import { BASE_URL } from "../../config";
+
 export class Finance extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      update_amount: 1000,
+      update_amount_kokatha: 1000,
+
+      loading_update_amount: false,
+      loading_update_amount_kokatha: false,
+
+      uploading_members: false,
+
+      members_file: null,
+      health_file: null,
+
+      stats: {
+        balance: 0,
+        allocated: 0,
+        linked: 0
+      }
+    };
+
+    this.handleUpdateAmountText = this.handleUpdateAmountText.bind(this);
+    this.handleUpdateAmount = this.handleUpdateAmount.bind(this);
+    this.handleUpdateAmountKokatha = this.handleUpdateAmountKokatha.bind(this);
+
+    this.handleLoadStats = this.handleLoadStats.bind(this);
+  }
+
+  componentDidMount() {
+    this.handleLoadStats();
+  }
+
+  handleLoadStats() {
+    var config = {
+      method: "get",
+      url: `${BASE_URL}/api/finance/stats`,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+
+    axios(config).then((res) => {
+      this.setState({
+        stats: res.data
+      })
+      
+    }).catch((err) => {
+      alert("Failed");
+    });
+  }
+
+  handleUpdateAmountKokatha() {
+    this.setState({
+      loading_update_amount_kokatha: true,
+    });
+
+    var config = {
+      method: "post",
+      url: `${BASE_URL}/api/finance/fund/`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        amount: parseInt(this.state.update_amount_kokatha),
+      },
+    };
+
+    console.log(config);
+
+    axios(config)
+      .then((response) => {
+        alert("Success");
+      })
+      .catch(function (error) {
+        alert("Failed");
+        console.log(error.response);
+      })
+      .finally(() => {
+        this.setState({
+          loading_update_amount_kokatha: false,
+        });
+        this.handleLoadStats();
+      });
+  }
+  
+
+  handleUpdateAmount() {
+    this.setState({
+      loading_update_amount: true,
+    });
+
+    var config = {
+      method: "put",
+      url: `${BASE_URL}/api/membership/fund/`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        amount: parseInt(this.state.update_amount),
+      },
+    };
+
+    console.log(config);
+
+    axios(config)
+      .then((response) => {
+        alert("Success");
+      })
+      .catch(function (error) {
+        alert("Failed");
+        console.log(error.response);
+      })
+      .finally(() => {
+        this.setState({
+          loading_update_amount: false,
+        });
+        this.handleLoadStats();
+      });
+  }
+
+  handleUpdateAmountText(e) {
+    const id = e.target.id;
+    const value = e.target.value;
+    this.setState({
+      [id]: [value]
+    });
   }
 
   render() {
+    const { stats } = this.state;
+
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 500 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ display: "flex", flexDirection: "column", minWidth: 500 }}>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Typography variant="h5" component="div" gutterBottom>
             Finance
           </Typography>
         </Box>
         <Divider />
 
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}> 
-          <Grid container>
-            <Grid item xs={5}>
-              <Box>
-                
-              </Box>
-            </Grid>
-            <Grid item xs={7}>
-            </Grid>
-          </Grid>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, m: 1 }}>
+          <Typography>Fund All Members</Typography>
+
+          <Box sx={{ display: "flex", flexDirection: "row", gap: 1, my: 0 }}>
+            <TextField
+              id="update_member"
+              label="Amount"
+              value={this.state.update_amount}
+              size="small"
+              type="number"
+              sx={{ maxWidth: "100%", width: 320 }}
+              onChange={this.handleUpdateAmountText}
+              InputProps={{
+                readOnly: false,
+              }}
+            />
+
+            <LoadingButton
+              variant="contained"
+              loading={this.state.loading_update_amount}
+              onClick={this.handleUpdateAmount}
+              disableElevation
+            >
+              Fund Accounts
+            </LoadingButton>
+          </Box>
+
+          <Divider />
+
+          <Typography>Update Kokatha Account</Typography>
+
+          <Box sx={{ display: "flex", flexDirection: "row", gap: 1, my: 0 }}>
+            <TextField
+              id="update_amount_kokatha"
+              label="Amount"
+              value={this.state.update_amount_kokatha}
+              size="small"
+              type="number"
+              sx={{ maxWidth: "100%", width: 320 }}
+              onChange={this.handleUpdateAmountText}
+              InputProps={{
+                readOnly: false,
+              }}
+            />
+
+            <LoadingButton
+              variant="contained"
+              loading={this.state.loading_update_amount}
+              onClick={this.handleUpdateAmountKokatha}
+              disableElevation
+            >
+              Fund Account
+            </LoadingButton>
+          </Box>
+
+          <Divider />
+
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1, m: 0 }}>
+            <Typography variant="h6">Stats</Typography>
+
+            <Box sx={{ display: 'flex', flexDirection: "row", gap: 1, m: 0 }}>
+              <Typography variant="button">
+                Account Balance:
+              </Typography>
+
+              <Typography variant="subtitle1" sx={{ textStyle: "italic" }}>
+                $ {stats.balance}
+              </Typography>
+            </Box>
+
+            <Box sx={{ display: 'flex', flexDirection: "row", gap: 1, m: 0 }}>
+              <Typography variant="button">
+                Amount Allocated (Unused):
+              </Typography>
+
+              <Typography variant="subtitle2">
+                $ {stats.allocated}
+              </Typography>
+            </Box>
+
+            <Box sx={{ display: 'flex', flexDirection: "row", gap: 1, m: 0 }}>
+              <Typography variant="button">
+                Amount Used:
+              </Typography>
+
+              <Typography variant="subtitle1" sx={{ textStyle: "italic" }}>
+                $ {stats.linked}
+              </Typography>
+            </Box>
+          </Box>
         </Box>
       </Box>
-    )
+    );
   }
 }

@@ -116,7 +116,7 @@ export default class Membership extends React.Component {
       currentId: null,
       currentFormData: null,
 
-      add_amount: 1500,
+      add_amount: 1000,
     };
 
     this.handleLoadApplications = this.handleLoadApplications.bind(this);
@@ -610,7 +610,7 @@ export default class Membership extends React.Component {
                         
                         (
 
-                          <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                          <List sx={{ width: '100%', bgcolor: 'background.paper' }}  style={{maxHeight: 370, overflow: 'auto'}} >
                             {
                               this.state.currentHealthData.map(h_data => (
                                 <ListItem divider>

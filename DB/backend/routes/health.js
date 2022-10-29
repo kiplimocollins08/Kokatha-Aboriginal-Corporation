@@ -33,7 +33,7 @@ router.get("/id/:id", async (req, res) => {
 router.get("/member/:id", async (req, res) => {
   const id = req.params.id;
   try {
-    const data = await HealthApplicationModel.find({member: id});
+    const data = await HealthApplicationModel.find({member: id, linked: true});
     res.status(200).json(data);
   } catch(err) {
     res.status(400).json({
