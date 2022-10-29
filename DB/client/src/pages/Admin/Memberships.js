@@ -16,6 +16,10 @@ import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+
 import Box from "@mui/material/Box";
 
 import axios from "axios";
@@ -85,6 +89,14 @@ const dataColumnsMembers = [
   },
 ];
 
+function formatDate(date) {
+  if (!date) return "None";
+  const d = new Date(date);
+  var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes();
+  // console.log(d);
+  return d.toLocaleDateString("en-UK");
+}
+
 export default class Membership extends React.Component {
   constructor(props) {
     super(props);
@@ -119,12 +131,35 @@ export default class Membership extends React.Component {
     const { members } = this.state;
 
     for (let i = 0; i < this.state.members.length; i++) {
-      if (members[i].aid === id) {
-        this.setState({
-          currentId: id,
-          currentFormData: members[i].data,
-          open: true,
-        });
+        
+      if (members[i].aid == id) {
+        var config1 = {
+          method: 'get',
+          url: `http://localhost:8000/api/health/member/${id}`,
+        };
+    
+        axios(config1)
+          .then((response) => {
+            console.log("Viws");
+            console.log(response.data);
+  
+            this.setState({
+              currentHealthData: response.data,
+              currentId: id,
+              currentFormData: members[i].data,
+              open: true,
+            });
+          })
+          .catch(function (error) {
+            console.log(error);
+            alert("Error");
+          });
+
+        // this.setState({
+        //   currentId: id,
+        //   currentFormData: members[i].data,
+        //   open: true,
+        // });
         return;
       }
     }
@@ -149,6 +184,26 @@ export default class Membership extends React.Component {
       })
       .catch(function (error) {
         alert("Error opening data");
+      }).finally(() => {
+        console.log(this.state.currentFormData);
+        var config1 = {
+          method: 'get',
+          url: `http://localhost:8000/api/health/member/${this.state.currentFormData._id}`,
+        };
+    
+        axios(config1)
+          .then((response) => {
+            console.log("Viws");
+            console.log(response.data);
+
+            this.setState({
+              currentHealthData: response.data
+            });
+          })
+          .catch(function (error) {
+            console.log(error);
+            alert("Error");
+          });
       });
   }
 
@@ -298,7 +353,7 @@ export default class Membership extends React.Component {
         </Box>
 
         <Modal open={this.state.open} onClose={this.handleClose}>
-          <Box sx={modalStyle}>
+          <Box sx={{...modalStyle, minWidth: '70%'}}>
             <Grid container spacing={1}>
               <Grid item xs={7}>
                 <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -425,7 +480,28 @@ export default class Membership extends React.Component {
                           minWidth: "100%",
                           minHeight: "100%",
                         }}
-                      ></Box>
+                      >
+                        
+                        {
+                        
+                        this.state.currentHealthData ? 
+                        
+                        (
+
+                          <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                            {
+                              this.state.currentHealthData.map(h_data => (
+                                <ListItem divider>
+                                  <ListItemText primary={h_data.reason} secondary={`\$${h_data.amount} - ${formatDate(h_data.date)}`} />
+                                </ListItem>
+                              ))
+                            }
+                          </List>
+
+                        ) : "" 
+                        
+                        }
+                      </Box>
                     </Paper>
                   </Box>
                 </Box>

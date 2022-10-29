@@ -45,7 +45,7 @@ export const StyledDataGrid = styled(DataGrid)(({ theme })=> ({
 export function createData(id, data, handleView, handleApprove) {
   return {
     id: id,
-    aid: data.member_id,
+    aid: data._id,
     account: data.account,
     name: `${data.first_name} ${data.last_name}`,
     email: data.email,
@@ -156,10 +156,9 @@ export function ApplicationForm(props) {
             readOnly: false,
           }}
         />
-
         :
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DesktopDatePicker 
+        <DesktopDatePicker
            id={key}
            label={titleCase(key)}
            value={value}

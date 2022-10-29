@@ -17,9 +17,10 @@ const healthApplicationNewSchema = new mongoose.Schema({
     required: true,
     type: Date
   },
-  dob: {
+  date: {
     required: true,
-    type: Date
+    type: Date,
+    default: Date.now()
   },
   phone: {
     required: true,
