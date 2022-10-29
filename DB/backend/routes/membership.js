@@ -42,6 +42,26 @@ router.get("/id/:member_id", async (req, res) => {
   }
 })
 
+router.put("/update/id/:member_id", async (req, res) => {
+  const id = req.params.member_id;
+  const data = req.body;
+
+  console.log(`Updating ${id}`);
+  console.log(data);
+
+  try {
+    await MembershipModel.updateOne({_id: id}, {$set: {name: data.name, ...data}});
+    res.status(200).json({
+      "message": ""
+    })
+  } catch(err) {
+    res.status(500).json({
+      "message": "failed to update",
+      "err": err
+    })
+  }
+});
+
 router.get("/approved", async (req, res) => {
   try {
     const members = await MembershipModel.find({approved: true});
@@ -156,7 +176,22 @@ router.post("/upload", async (req, res) => {
       "message": "success"
     })
   })
-})
+});
+
+
+router.delete("/delete/:member_id", async (req, res) => {
+  const id = req.params.member_id;
+  try {
+    await MembershipModel.findByIdAndDelete(id);
+    res.status(200).json({
+      "message": "deleted"
+    });
+  } catch(err) {
+    res.status(400).json({message: err.message});
+  }
+});
+
+
 
 
 module.exports = router

@@ -4,7 +4,6 @@ const { MembershipModel, LinkModel } = require('../models');
 
 const router = express.Router();
 
-
 // Post Method
 router.post('/post', (req, res) => {
   res.send("Post API");
@@ -14,20 +13,7 @@ router.post('/post', (req, res) => {
 router.post('/create_member', async (req, res) => {
   const body = req.body;
   const member = new MembershipModel({
-    first_name: body.first_name,
-    last_name: body.last_name,
-    single_name: body.single_name,
-    aka: body.aka,
-    mobile: body.mobile,
-    email: body.email,
-    home_phone: body.home_phone,
-    work_phone: body.work_phone,
-    member_id: body.member_id,
-    street_address: body.street_address,
-    suburb: body.suburb,
-    state: body.state,
-    dob: body.dob,
-    date_of_membership: body.date_of_membership
+    ...body
   })
 
   try {
@@ -57,23 +43,9 @@ router.post('/create_link/:member_id', async (req, res) => {
     res.status(201).json(saved);
   }
   catch(error){
-    res.status(400).json({message: error.message})
+    res.status(400).json({message: error.message});
   }
 })
 
-
-
-// Get One
-router.get("/get_links/:member_id", async (req, res) => {
-  const id = req.params.id;
-  try {
-    const data = await MembershipModel.find({});
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({
-      message: err.message
-    })
-  }
-})
 
 module.exports = router;

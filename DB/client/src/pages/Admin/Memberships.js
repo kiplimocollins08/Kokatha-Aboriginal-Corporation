@@ -23,25 +23,22 @@ import ListItemText from '@mui/material/ListItemText';
 import Box from "@mui/material/Box";
 
 import axios from "axios";
+
 import { BASE_URL } from "../../config";
+
 import {
   ApplicationForm,
   createData,
   modalStyle,
   StyledDataGrid,
 } from "./Applications";
+import MemberPage, { MemberPageModal } from "./modals/MemberPage";
 
 const dataColumnsMembers = [
   {
     field: "id",
     headerName: "ID",
     width: 10,
-  },
-  {
-    field: "aid",
-    headerName: "Member ID",
-    width: 150,
-    flex: 1,
   },
   {
     field: "name",
@@ -89,6 +86,15 @@ const dataColumnsMembers = [
   },
 ];
 
+function titleCase(str) {
+  str = str.toLowerCase();
+  str = str.split("_");
+  for (var i = 0; i < str.length; i++) {
+    str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
+  }
+  return str.join(" ");
+}
+
 function formatDate(date) {
   if (!date) return "None";
   const d = new Date(date);
@@ -96,6 +102,7 @@ function formatDate(date) {
   // console.log(d);
   return d.toLocaleDateString("en-UK");
 }
+
 
 export default class Membership extends React.Component {
   constructor(props) {
@@ -120,6 +127,10 @@ export default class Membership extends React.Component {
 
     this.handleSubmitAmount = this.handleSubmitAmount.bind(this);
     this.handleChangeAmount = this.handleChangeAmount.bind(this);
+    this.handleChangeField = this.handleChangeField.bind(this);
+
+    this.handleUpdateMember = this.handleUpdateMember.bind(this);
+    this.handleDeleteMember = this.handleDeleteMember.bind(this);
   }
 
   componentDidMount() {
@@ -302,6 +313,73 @@ export default class Membership extends React.Component {
     // })
   }
 
+  handleUpdateMember() {
+    const data = this.state.currentFormData;
+    delete data['_id'];
+    delete data['__v'];
+
+    console.log(data);
+
+    var config = {
+      method: 'put',
+      url: `${BASE_URL}/api/membership/update/id/${this.state.currentId}`,
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : data
+    };
+
+    axios(config)
+      .then((response) => {
+        this.handleLoadApplications();
+        alert("Success");
+        console.log(JSON.stringify(response.data));
+
+        // this.handleLoadApplications();
+      })
+      .catch(function (error) {
+        console.log(error);
+        alert("Failed");
+      })
+
+  }
+
+  handleDeleteMember() {
+    if (!this.state.currentId) return
+
+    var config = {
+      method: 'delete',
+      url: `${BASE_URL}/api/membership/delete/${this.state.currentId}`,
+      headers: { }
+    };
+
+    axios(config)
+      .then((response) => {
+        this.setState({
+          open: false,
+          currentId: null,
+          currentFormData: null
+        });
+        this.handleLoadApplications();
+        console.log(JSON.stringify(response.data));
+       // alert("Deleted");
+      })
+      .catch(function (error) {
+        console.log(error);
+        alert("Failure");
+      });
+
+  }
+
+  handleChangeField(e) {
+    const id = e.target.id;
+    const value = e.target.value;
+    console.log(`${id} - ${value}`)
+    this.setState({
+      currentFormData: ({...this.state.currentFormData, [id]: value})
+    });
+  }
+
   handleSubmitAmount() {
     var data = {
       amount: this.state.add_amount,
@@ -334,6 +412,44 @@ export default class Membership extends React.Component {
   }
 
   render() {
+    const data = this.state.currentFormData;
+
+    const itemList = [];
+
+    if (data)
+    for (const [key, value] of Object.entries(data)) {
+      itemList.push(
+        <Grid item xs={12} md={6} sm={6} lg={6}> { key !== "dob" && key !== "date_of_membership" ?
+          <TextField
+            id={key}
+            label={titleCase(key)}
+            value={value}
+            size="small"
+            sx={{ maxWidth: "100%", width: 320 }}
+            onChange={this.handleChangeField}
+            // InputProps={{
+            //   readOnly: false,
+            // }}
+          />
+          :
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DesktopDatePicker
+             id={key}
+             label={titleCase(key)}
+             value={value}
+             onChange={(f) => f}
+             readOnly={true}
+            renderInput={(params) => <TextField {...params}  size="small"  InputProps={{
+              readOnly: false,
+            }}  sx={{ maxWidth: "100%", width: 320 }} />}
+          /> 
+        </LocalizationProvider>
+        }
+        </Grid>
+      )
+    }
+
+
     return (
       <Box
         sx={{
@@ -353,15 +469,21 @@ export default class Membership extends React.Component {
         </Box>
 
         <Modal open={this.state.open} onClose={this.handleClose}>
+          {/* <MemberPage memberData={this.state.currentFormData} healthData={this.state.currentHealthData} /> */}
           <Box sx={{...modalStyle, minWidth: '70%'}}>
             <Grid container spacing={1}>
               <Grid item xs={7}>
                 <Box sx={{ display: "flex", flexDirection: "column" }}>
                   <Typography variant="subtitle1">Member Details</Typography>
-                  <ApplicationForm
+                  {/* <ApplicationForm
                     application_id={this.state.currentId}
                     data={this.state.currentFormData}
-                  />
+                  /> */}
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                      <Grid container spacing={2} sx={{ maxWidth: 700 }}>
+                        {itemList}
+                      </Grid>
+                    </Box>
                 </Box>
               </Grid>
               <Grid item xs={5}>
@@ -520,11 +642,11 @@ export default class Membership extends React.Component {
                     p: 2,
                   }}
                 >
-                  <Button variant="contained" color="success" disableElevation>
+                  <Button variant="contained" color="success" disableElevation onClick={this.handleUpdateMember}>
                     Update
                   </Button>
 
-                  <Button variant="contained" color="error" disableElevation>
+                  <Button variant="contained" color="error" disableElevation onClick={this.handleDeleteMember}>
                     Delete
                   </Button>
 

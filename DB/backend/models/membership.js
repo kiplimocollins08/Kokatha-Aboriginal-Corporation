@@ -1,22 +1,27 @@
 const mongoose = require('mongoose');
 
 const memberhipSchema = new mongoose.Schema({
-  first_name: {
-    required: true,
-    type: String
-  },
-  last_name: {
-    required: true,
-    type: String
-  },
-  single_name: {
-    required: true,
-    type: String
-  },
-  aka: {
+  name: {
     required: false,
-    type: String
+    type: String,
+    default: ""
   },
+  // first_name: {
+  //   required: true,
+  //   type: String
+  // },
+  // last_name: {
+  //   required: true,
+  //   type: String
+  // },
+  // single_name: {
+  //   required: true,
+  //   type: String
+  // },
+  // aka: {
+  //   required: false,
+  //   type: String
+  // },
   mobile: {
     required: true,
     type: String
@@ -24,12 +29,12 @@ const memberhipSchema = new mongoose.Schema({
   email: {
     required: true,
     type: String,
-    unique: true
+    unique: true,
   },
-  home_phone: {
-    required: true,
-    type: String
-  },
+  // home_phone: {
+  //   required: true,
+  //   type: String
+  // },
   work_phone: {
     required: false,
     default: "-",
@@ -66,6 +71,10 @@ const memberhipSchema = new mongoose.Schema({
     default: 2000.,
     type: Number
   }
+}, 
+{ 
+  strict: true,
+  strictQuery: true
 });
 
 module.exports = mongoose.model('MembershipModel', memberhipSchema);

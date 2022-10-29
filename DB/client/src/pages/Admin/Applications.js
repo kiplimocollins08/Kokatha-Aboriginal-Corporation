@@ -47,7 +47,7 @@ export function createData(id, data, handleView, handleApprove) {
     id: id,
     aid: data._id,
     account: data.account,
-    name: `${data.first_name} ${data.last_name}`,
+    name: data.name,
     email: data.email,
     mobile: data.mobile,
     approved: data.approved,
@@ -308,33 +308,33 @@ export default class Applications extends React.Component {
   handleViewApplication(e) {
     const id = e.target.value;
 
-      var config = {
-        method: 'get',
-        url: `${BASE_URL}/api/membership/id/${id}`,
-        headers: { }
-      };
-      
-      axios(config)
-        .then((response) => {
-          console.log(JSON.stringify(response.data));
-          this.setState({
-            currentId: id,
-            currentFormData: response.data,
-            open: true,
-          })
+    var config = {
+      method: 'get',
+      url: `${BASE_URL}/api/membership/id/${id}`,
+      headers: { }
+    };
+    
+    axios(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+        this.setState({
+          currentId: id,
+          currentFormData: response.data,
+          open: true,
         })
-        .catch(function (error) {
-          alert("Error opening data");
-        });
+      })
+      .catch(function (error) {
+        alert("Error opening data");
+      });
   }
 
-  handleViewApplication(e) {
-    const id = e.target.value;
-    this.setState({
-      currentId: id,
-      open: true
-    });
-  }
+  // handleViewApplication(e) {
+  //   const id = e.target.value;
+  //   this.setState({
+  //     currentId: id,
+  //     open: true
+  //   });
+  // }
 
   handleLinkApplication(e) {
     const id = e.target.value;
