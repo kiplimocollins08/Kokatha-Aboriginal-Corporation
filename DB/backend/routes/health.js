@@ -15,8 +15,20 @@ router.get("/", async (req, res) => {
       message: err.message
     })
   }
-})
+});
 
+
+router.get("/id/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const data = await HealthApplicationModel.findById(id);
+    res.status(200).json(data);
+  } catch(err) {
+    res.status(400).json({
+      message: err.message
+    })
+  }
+});
 
 // Create Health Application
 router.post('/apply/:member_id', async (req, res) => {

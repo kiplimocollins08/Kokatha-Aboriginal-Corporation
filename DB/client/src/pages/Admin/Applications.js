@@ -27,7 +27,7 @@ export const modalStyle = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 700,
-  minWidth: '90%',
+  // minWidth: '90%',
   maxHeight: '95%',
   bgcolor: 'background.paper',
   border: '2px solid #000',
@@ -58,7 +58,7 @@ export function createData(id, data, handleView, handleApprove) {
   }
 }
 
-export function createHealthData(id, data, handleLinkApplication) {
+export function createHealthData(id, data, handleLinkApplication, handleViewApplication) {
   return {
     _id: data._id,
     id: id,
@@ -69,76 +69,10 @@ export function createHealthData(id, data, handleLinkApplication) {
     amount: data.amount,
     reason: data.reason,
     link: data.reason,
-    handleLink: handleLinkApplication
+    handleLink: handleLinkApplication,
+    handleView: handleViewApplication
   }
 }
-
-const dataColumnsApplications = [
-  {
-    field: 'id',
-    headerName: 'ID',
-    width: 10,
-  },
-  {
-    field: 'name',
-    headerName: "Name",
-    width: 200,
-    flex: 1,
-  },
-  {
-    field: 'email',
-    headerName: "Email",
-    width: 150,
-    flex: 1,
-  },
-  {
-    field: 'mobile',
-    headerName: "Mobile",
-    width: "150",
-    flex: 1,
-  },
-  {
-    field: 'approved',
-    headerName: "Approved",
-    width: "50",
-    flex: 1,
-  },
-  {
-    field: "action",
-    headerName: "Actions",
-    minWidth: 150,
-    flex: 1,
-    renderCell: (params) => (
-
-      <Box sx={{display: 'flex', flexDirection: 'row', gap: 1}}>
-        {params.row.approved ? null : 
-        (<Button
-            variant="contained"
-            disableElevation
-            size="small"
-            textSizeSmall
-            value={params.row.aid}
-            onClick={params.row.handleApprove}
-        >
-          Approve
-        </Button>
-        )
-      }
-         <Button
-         variant="contained"
-         disableElevation
-         size="small"
-         textSizeSmall
-         value={params.row.aid}
-         onClick={params.row.handleView}
-     >
-       View
-     </Button>
-     </Box>
-        ),
-  },
-
-]
 
 const dataColumnsHealthApplications = [
   {
@@ -147,15 +81,15 @@ const dataColumnsHealthApplications = [
   {
     field: 'name', headerName: 'Name', width: 1, flex: 1,
   },
-  {
-    field: 'dob', headerName: 'D.O.B', width: 1, flex: 1,
-  },
+  // {
+  //   field: 'dob', headerName: 'D.O.B', width: 1, flex: 1,
+  // },
   {
     field: 'phone', headerName: 'Phone', width: 1, flex: 1,
   },
-  {
-    field: 'address', headerName: 'Address', width: 1, flex: 1,
-  },
+  // {
+  //   field: 'address', headerName: 'Address', width: 1, flex: 1,
+  // },
   {
     field: 'amount', headerName: 'Amount', width: 1, flex: 1,
   },
@@ -165,17 +99,27 @@ const dataColumnsHealthApplications = [
   {
     field: 'link', headerName: 'Link', width: 1, flex: 1,
     renderCell: (params) => (
-      <Button 
-        variant="contained" disableElevation
-        onClick={params.row.handleLink}
-        value={params.row._id}
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+        <Button 
+          variant="contained" disableElevation
+          onClick={params.row.handleLink}
+          value={params.row._id}
+          >
+          Link
+        </Button>
 
-      >
-        Link
-      </Button>
+        <Button 
+          variant="contained" disableElevation
+          onClick={params.row.handleView}
+          value={params.row._id}
+          >
+            View
+        </Button>
+      </Box>
     )
   }
 ]
+
 
 function titleCase(str) {
   str = str.toLowerCase();
@@ -240,6 +184,98 @@ export function ApplicationForm(props) {
   )
 }
 
+
+class HealthViewModal extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      id: props.id,
+      data: []
+    };
+
+    this.handleLoadApplication = this.handleLoadApplication.bind(this);
+  }
+
+  componentDidMount() {
+    this.handleLoadApplication();
+  }
+
+  handleLoadApplication() {
+    var config = {
+      method: 'get',
+      url: `${BASE_URL}/api/health/id/${this.state.id}`,
+    };
+
+    axios(config).then((res) => {
+      this.setState({
+        data: res.data
+      })
+    }).catch(function(error) {
+      console.log(error);
+    })
+  }
+
+  render() {
+    const { data } = this.state;
+
+    const itemList = [];
+
+    if (!data) {
+      return (
+        <Box>
+          Empty
+        </Box>
+      )
+    }
+
+    for (const [key, value] of Object.entries(data)) {
+      itemList.push(
+        <Grid item xs={12} md={6} sm={6} lg={6}> { key !== "dob" && key !== "date_of_membership" ?
+          <TextField
+            id={key}
+            label={titleCase(key)}
+            value={value}
+            size="small"
+            sx={{ maxWidth: "100%", width: 320 }}
+            InputProps={{
+              readOnly: false,
+            }}
+          />
+
+          :
+          
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DesktopDatePicker 
+            id={key}
+            label={titleCase(key)}
+            value={value}
+            onChange={(f) => f}
+            readOnly={true}
+            renderInput={(params) => <TextField {...params}  size="small"  InputProps={{
+              readOnly: false,
+            }}  sx={{ maxWidth: "100%", width: 320 }} />}
+          /> 
+          </LocalizationProvider>
+        }
+        </Grid>
+      )
+    }
+
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <Typography variant="subtitle1" gutterBottom>
+          Health Application Form
+        </Typography>
+        <Grid container spacing={2} sx={{ maxWidth: 700 }}>
+          {itemList}
+        </Grid>
+      </Box>
+    )
+  }
+}
+
+
 export default class Applications extends React.Component {
   constructor(props) {
     super(props);
@@ -263,6 +299,7 @@ export default class Applications extends React.Component {
     this.handleOpen = this.handleOpen.bind(this);
 
     this.handleLinkApplication = this.handleLinkApplication.bind(this);
+    this.handleViewApplication = this.handleViewApplication.bind(this);
   }
 
   componentDidMount() {
@@ -290,6 +327,14 @@ export default class Applications extends React.Component {
         .catch(function (error) {
           alert("Error opening data");
         });
+  }
+
+  handleViewApplication(e) {
+    const id = e.target.value;
+    this.setState({
+      currentId: id,
+      open: true
+    });
   }
 
   handleLinkApplication(e) {
@@ -343,7 +388,7 @@ export default class Applications extends React.Component {
       const data = response.data;
       const res = []
       for (let i = 0; i < data.length; i++) {
-        res.push(createHealthData(i + 1, data[i], this.handleLinkApplication));
+        res.push(createHealthData(i + 1, data[i], this.handleLinkApplication, this.handleViewApplication));
       }
       this.setState({
         applications: res
@@ -377,8 +422,9 @@ export default class Applications extends React.Component {
       </Box>
 
     <Modal open={this.state.open} onClose={this.handleClose}>
-      <Box sx={modalStyle}>
-        <ApplicationForm application_id={this.state.currentId} data={this.state.currentFormData}/>
+      <Box sx={{...modalStyle, maxWidth: 700}}>
+        {/* <ApplicationForm application_id={this.state.currentId} data={this.state.currentFormData}/> */}
+        <HealthViewModal id={this.state.currentId} />
       </Box>
     </Modal>
     <Paper
