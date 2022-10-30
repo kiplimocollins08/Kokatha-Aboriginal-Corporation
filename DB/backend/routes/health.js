@@ -6,6 +6,10 @@ const router = express.Router();
 
 const mail = require('../utils/mail');
 
+
+const SUCCESSFUL_EMAIL = "Your funding has been approved";
+const FAILED_APPLICATION_EMAIL = "You don't have enough funding.\n Please contact the office for further enquieries.\n Tel (08) 8642 2068";
+
 router.get("/", async (req, res) => {
   try {
     const data = await HealthApplicationModel.find({linked: false});
@@ -125,6 +129,9 @@ router.put("/link/:application_id", async (req, res) => {
     console.log(member);
 
     if (member.account_balance < data.amount) {
+      const res = mail.sendEmail(member.email, "Kokatha Health Application", 
+        FAILED_APPLICATION_EMAIL
+      )
       res.status(400).json({
         "message": "Insufficient funds",
         "balance": member.account_balance,
@@ -135,6 +142,9 @@ router.put("/link/:application_id", async (req, res) => {
     await HealthApplicationModel.findOneAndUpdate({_id: data._id}, {linked: true});
     await MembershipModel.findOneAndUpdate({_id: member._id}, {account_balance: member.account_balance - data.amount});
 
+    mail.sendEmail(member.email, "Kokatha Health Application", 
+      SUCCESSFUL_EMAIL
+      )
     res.status(200).json({message: "success"});
   }catch(error) {
     res.status(400).json({message: error.message})
@@ -144,9 +154,8 @@ router.put("/link/:application_id", async (req, res) => {
 
 router.get("/mail/", async (req, res) => {
   try {
-    const res = await mail.sendEmail("francismuti2000@gmail.com", "hello", "hello");
+    const res = mail.sendEmail("francismuti2000@gmail.com", "hello", "hello");
     
-
     res.status(200).json({
       "message": "success",
       "info": res

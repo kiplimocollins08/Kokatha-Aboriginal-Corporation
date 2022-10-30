@@ -41,10 +41,11 @@ const memberhipSchema = new mongoose.Schema({
     type: String
   },
   member_id: {
-    required: true,
+  //   required: true,
     type: String,
-    unique: true,
-    dropDups: true,
+
+  //   unique: true,
+  //   dropDups: true,
   },
   street_address: {
     required: true,
