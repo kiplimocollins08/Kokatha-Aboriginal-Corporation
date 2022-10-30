@@ -7,8 +7,8 @@ const router = express.Router();
 const mail = require('../utils/mail');
 
 
-const SUCCESSFUL_EMAIL = "Your funding has been approved";
-const FAILED_APPLICATION_EMAIL = "You don't have enough funding.\n Please contact the office for further enquieries.\n Tel (08) 8642 2068";
+const SUCCESSFUL_EMAIL = "Dear Sir/Madam,\nYour funding has been approved. You should expect to have your funds transfered to your account within 2 business days.\n\nYours Sincerely,\n Kokatha Admin.";
+const FAILED_APPLICATION_EMAIL = "Dear Sir/Madam,\nYou don't have enough funding in your account.\nPlease contact the office for further enquieries to find out when your funds will be reallocated.\nTel (08) 8642 2068 \n\nYours Sincerely,\n Kokatha Admin.";
 
 router.get("/", async (req, res) => {
   try {
