@@ -17,9 +17,9 @@ import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
 
 import Box from "@mui/material/Box";
 
@@ -100,11 +100,19 @@ function titleCase(str) {
 function formatDate(date) {
   if (!date) return "None";
   const d = new Date(date);
-  var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes();
+  var datestring =
+    d.getDate() +
+    "-" +
+    (d.getMonth() + 1) +
+    "-" +
+    d.getFullYear() +
+    " " +
+    d.getHours() +
+    ":" +
+    d.getMinutes();
   // console.log(d);
   return d.toLocaleDateString("en-UK");
 }
-
 
 export default class Membership extends React.Component {
   constructor(props) {
@@ -140,9 +148,13 @@ export default class Membership extends React.Component {
     this.handleUpdateMember = this.handleUpdateMember.bind(this);
     this.handleDeleteMember = this.handleDeleteMember.bind(this);
 
-    this.handleViewHealthAppliction = this.handleViewHealthAppliction.bind(this);
+    this.handleViewHealthAppliction =
+      this.handleViewHealthAppliction.bind(this);
     this.handleCloseHealth = this.handleCloseHealth.bind(this);
-    this.handleApproveHealthApplication = this.handleApproveHealthApplication.bind(this);
+    this.handleApproveHealthApplication =
+      this.handleApproveHealthApplication.bind(this);
+
+    this.handleReloadView = this.handleReloadView.bind(this);
   }
 
   componentDidMount() {
@@ -154,18 +166,17 @@ export default class Membership extends React.Component {
     const { members } = this.state;
 
     for (let i = 0; i < this.state.members.length; i++) {
-        
       if (members[i].aid == id) {
         var config1 = {
-          method: 'get',
+          method: "get",
           url: `http://localhost:8000/api/health/member/${id}`,
         };
-    
+
         axios(config1)
           .then((response) => {
             console.log("Viws");
             console.log(response.data);
-  
+
             this.setState({
               currentHealthData: response.data,
               currentId: id,
@@ -207,28 +218,54 @@ export default class Membership extends React.Component {
       })
       .catch(function (error) {
         alert("Error opening data");
-      }).finally(() => {
+      })
+      .finally(() => {
         console.log("Line 209");
         console.log(this.state.currentFormData);
+
         var config1 = {
-          method: 'get',
+          method: "get",
           url: `http://localhost:8000/api/health/member/${this.state.currentFormData._id}`,
         };
+
         console.log(config1);
-    
+
         axios(config1)
           .then((response) => {
             console.log("Viws");
             console.log(response.data);
 
             this.setState({
-              currentHealthData: response.data
+              currentHealthData: response.data,
             });
           })
           .catch(function (error) {
             console.log(error);
             alert("Error");
           });
+      });
+  }
+
+  handleReloadView() {
+    var config1 = {
+      method: "get",
+      url: `http://localhost:8000/api/health/member/${this.state.currentId}`,
+    };
+
+    axios(config1)
+      .then((response) => {
+        console.log("Reload Views");
+        console.log(response.data);
+
+        this.setState({
+          currentHealthData: response.data,
+          open: true,
+          openHealth: false,
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+        alert("Error");
       });
   }
 
@@ -240,8 +277,8 @@ export default class Membership extends React.Component {
 
   handleOpenHealth() {
     this.setState({
-      openHealth: true
-    })
+      openHealth: true,
+    });
   }
 
   handleClose() {
@@ -253,10 +290,9 @@ export default class Membership extends React.Component {
 
   handleCloseHealth() {
     this.setState({
-      openHealth: false
-    })
+      openHealth: false,
+    });
   }
-
 
   handleApproveApplication(e) {
     const id = e.target.value;
@@ -267,9 +303,9 @@ export default class Membership extends React.Component {
     const id = this.state.currentIdHealth;
 
     var config = {
-      method: 'put',
+      method: "put",
       url: `${BASE_URL}/api/health/link/${id}`,
-      headers: { }
+      headers: {},
     };
 
     axios(config)
@@ -279,11 +315,10 @@ export default class Membership extends React.Component {
       })
       .catch(function (error) {
         alert(error.response.data["message"]);
-      }).finally(() => {
-        this.setState({
-          openHealth: false
-        })
       })
+      .finally(() => {
+        this.handleReloadView(id);
+      });
   }
 
   async handleLoadApplications() {
@@ -365,18 +400,18 @@ export default class Membership extends React.Component {
 
   handleUpdateMember() {
     const data = this.state.currentFormData;
-    delete data['_id'];
-    delete data['__v'];
+    delete data["_id"];
+    delete data["__v"];
 
     console.log(data);
 
     var config = {
-      method: 'put',
+      method: "put",
       url: `${BASE_URL}/api/membership/update/id/${this.state.currentId}`,
-      headers: { 
-        'Content-Type': 'application/json'
+      headers: {
+        "Content-Type": "application/json",
       },
-      data : data
+      data: data,
     };
 
     axios(config)
@@ -390,17 +425,16 @@ export default class Membership extends React.Component {
       .catch(function (error) {
         console.log(error);
         alert("Failed");
-      })
-
+      });
   }
 
   handleDeleteMember() {
-    if (!this.state.currentId) return
+    if (!this.state.currentId) return;
 
     var config = {
-      method: 'delete',
+      method: "delete",
       url: `${BASE_URL}/api/membership/delete/${this.state.currentId}`,
-      headers: { }
+      headers: {},
     };
 
     axios(config)
@@ -408,25 +442,24 @@ export default class Membership extends React.Component {
         this.setState({
           open: false,
           currentId: null,
-          currentFormData: null
+          currentFormData: null,
         });
         this.handleLoadApplications();
         console.log(JSON.stringify(response.data));
-       // alert("Deleted");
+        // alert("Deleted");
       })
       .catch(function (error) {
         console.log(error);
         alert("Failure");
       });
-
   }
 
   handleChangeField(e) {
     const id = e.target.id;
     const value = e.target.value;
-    console.log(`${id} - ${value}`)
+    console.log(`${id} - ${value}`);
     this.setState({
-      currentFormData: ({...this.state.currentFormData, [id]: value})
+      currentFormData: { ...this.state.currentFormData, [id]: value },
     });
   }
 
@@ -468,7 +501,7 @@ export default class Membership extends React.Component {
       currentIdHealth: id,
       openHealth: true,
       // open: false
-    })
+    });
   }
 
   render() {
@@ -477,38 +510,47 @@ export default class Membership extends React.Component {
     const itemList = [];
 
     if (data)
-    for (const [key, value] of Object.entries(data)) {
-      itemList.push(
-        <Grid item xs={12} md={6} sm={6} lg={6}> { key !== "dob" && key !== "date_of_membership" ?
-          <TextField
-            id={key}
-            label={titleCase(key)}
-            value={value}
-            size="small"
-            sx={{ maxWidth: "100%", width: 320 }}
-            onChange={this.handleChangeField}
-            // InputProps={{
-            //   readOnly: false,
-            // }}
-          />
-          :
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DesktopDatePicker
-             id={key}
-             label={titleCase(key)}
-             value={value}
-             onChange={(f) => f}
-             readOnly={true}
-            renderInput={(params) => <TextField {...params}  size="small"  InputProps={{
-              readOnly: false,
-            }}  sx={{ maxWidth: "100%", width: 320 }} />}
-          /> 
-        </LocalizationProvider>
-        }
-        </Grid>
-      )
-    }
+      for (const [key, value] of Object.entries(data)) {
+        if (["__v", "account_balance"].includes(key)) continue;
 
+        itemList.push(
+          <Grid item xs={12} md={6} sm={6} lg={6}>
+            {key !== "dob" && key !== "date_of_membership" ? (
+              <TextField
+                id={key}
+                label={titleCase(key)}
+                value={value}
+                size="small"
+                sx={{ maxWidth: "100%", width: 320 }}
+                onChange={this.handleChangeField}
+                // InputProps={{
+                //   readOnly: false,
+                // }}
+              />
+            ) : (
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DesktopDatePicker
+                  id={key}
+                  label={titleCase(key)}
+                  value={value}
+                  onChange={(f) => f}
+                  readOnly={true}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      InputProps={{
+                        readOnly: false,
+                      }}
+                      sx={{ maxWidth: "100%", width: 320 }}
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            )}
+          </Grid>
+        );
+      }
 
     return (
       <Box
@@ -529,40 +571,30 @@ export default class Membership extends React.Component {
         </Box>
 
         <Modal open={this.state.openHealth} onClose={this.handleCloseHealth}>
-          <Box sx={{...modalStyle, maxWidth: 700}}>
+          <Box sx={{ ...modalStyle, maxWidth: 700 }}>
             {/* <ApplicationForm application_id={this.state.currentId} data={this.state.currentFormData}/> */}
-            <HealthViewModal id={this.state.currentIdHealth} handleApproveApplication={this.handleApproveHealthApplication} />
+            <HealthViewModal
+              id={this.state.currentIdHealth}
+              handleApproveApplication={this.handleApproveHealthApplication}
+            />
           </Box>
         </Modal>
 
         <Modal open={this.state.open} onClose={this.handleClose}>
-          {/* <MemberPage memberData={this.state.currentFormData} healthData={this.state.currentHealthData} /> */}
-          <Box sx={{...modalStyle, minWidth: '70%'}}>
+          <Box sx={{ ...modalStyle, minWidth: "70%" }}>
             <Grid container spacing={1}>
               <Grid item xs={7}>
-                <Box sx={{ display: "flex", flexDirection: "column" }}>
-                  <Typography variant="subtitle1">Member Details</Typography>
-                  {/* <ApplicationForm
-                    application_id={this.state.currentId}
-                    data={this.state.currentFormData}
-                  /> */}
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                  <Box sx={{ display: "flex", flexDirection: "column" }}>
+                    <Typography variant="subtitle1">Member Details</Typography>
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                    >
                       <Grid container spacing={2} sx={{ maxWidth: 700 }}>
                         {itemList}
                       </Grid>
                     </Box>
-                </Box>
-              </Grid>
-              <Grid item xs={5}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 1,
-                    width: "100%",
-                    maxHeight: "100%",
-                  }}
-                >
+                  </Box>
                   <Box
                     sx={{
                       margin: 0,
@@ -640,6 +672,18 @@ export default class Membership extends React.Component {
                       </Box>
                     </Paper>
                   </Box>
+                </Box>
+              </Grid>
+              <Grid item xs={5}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 1,
+                    width: "100%",
+                    maxHeight: "100%",
+                  }}
+                >
                   <Box
                     sx={{
                       margin: 0,
@@ -657,7 +701,7 @@ export default class Membership extends React.Component {
                       variant="outlined"
                       sx={{
                         margin: 0,
-                        height: 350,
+                        height: 470,
                         maxHeight: "100%",
                         minWidth: 200,
                       }}
@@ -670,69 +714,73 @@ export default class Membership extends React.Component {
                           minHeight: "100%",
                         }}
                       >
-                        
-                        {
-                        
-                        this.state.currentHealthData ? 
-                        
-                        (
-
-                          <List sx={{ width: '100%', bgcolor: 'background.paper' }}  style={{maxHeight: 370, overflow: 'auto'}} >
-                            {
-                              this.state.currentHealthData.map(h_data => (
-                                <ListItemButton
-
-                                  onClick={() => this.handleViewHealthAppliction(h_data._id)}
-                                  divider 
-                                >
-                                  <ListItemText
-                                    primary={`${h_data.reason} - ${h_data.linked ? "approved" : "not approved"}`}
-
-                                    secondary={`\$${h_data.amount} - ${formatDate(h_data.date)}`}
-                                     />
-                                </ListItemButton>
-                              ))
-                            }
+                        {this.state.currentHealthData ? (
+                          <List
+                            sx={{ width: "100%", bgcolor: "background.paper" }}
+                            style={{ maxHeight: 470, overflow: "auto" }}
+                          >
+                            {this.state.currentHealthData.map((h_data) => (
+                              <ListItemButton
+                                onClick={() =>
+                                  this.handleViewHealthAppliction(h_data._id)
+                                }
+                                divider
+                              >
+                                <ListItemText
+                                  primary={`${h_data.reason} - ${
+                                    h_data.linked ? "approved" : "not approved"
+                                  }`}
+                                  secondary={`\$${h_data.amount} - ${formatDate(
+                                    h_data.date
+                                  )}`}
+                                />
+                              </ListItemButton>
+                            ))}
                           </List>
-
-                        ) : "" 
-                        
-                        }
+                        ) : (
+                          ""
+                        )}
                       </Box>
                     </Paper>
                   </Box>
-                </Box>
-              </Grid>
-              <Grid item xs={12}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: 1,
-                    width: "100%",
-                    maxHeight: "100%",
-                    border: 1,
-                    borderRadius: 1,
-                    borderColor: 'gray',
-                    p: 2,
-                  }}
-                >
-                  <Button variant="contained" color="success" disableElevation onClick={this.handleUpdateMember}>
-                    Update
-                  </Button>
 
-                  <Button variant="contained" color="error" disableElevation onClick={this.handleDeleteMember}>
-                    Delete
-                  </Button>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      gap: 1,
+                      width: "100%",
+                      maxHeight: "100%",
+                      border: 1,
+                      borderRadius: 1,
+                      borderColor: "#efefef",
+                      p: 2,
+                    }}
+                  >
+                    <Button
+                      variant="contained"
+                      color="success"
+                      disableElevation
+                      onClick={this.handleUpdateMember}
+                    >
+                      Update
+                    </Button>
 
-
+                    <Button
+                      variant="contained"
+                      color="error"
+                      disableElevation
+                      onClick={this.handleDeleteMember}
+                    >
+                      Delete
+                    </Button>
+                  </Box>
                 </Box>
               </Grid>
             </Grid>
           </Box>
         </Modal>
 
-        
         <Paper
           variant="outlined"
           elevation={0}
