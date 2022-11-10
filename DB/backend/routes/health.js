@@ -7,8 +7,8 @@ const router = express.Router();
 const mail = require('../utils/mail');
 
 
-const SUCCESSFUL_EMAIL = "Dear Sir/Madam,\nYour funding has been approved. You should expect to have your funds transfered to your account within 2 business days.\n\nYours Sincerely,\n Kokatha Admin.";
-const FAILED_APPLICATION_EMAIL = "Dear Sir/Madam,\nYou don't have enough funding in your account.\nPlease contact the office for further enquieries to find out when your funds will be reallocated.\nTel (08) 8642 2068 \n\nYours Sincerely,\n Kokatha Admin.";
+const SUCCESSFUL_EMAIL = "Your funding has been approved";
+const FAILED_APPLICATION_EMAIL = "You don't have enough funding.\n Please contact the office for further enquieries.\n Tel (08) 8642 2068";
 
 router.get("/", async (req, res) => {
   try {
@@ -37,7 +37,7 @@ router.get("/id/:id", async (req, res) => {
 router.get("/member/:id", async (req, res) => {
   const id = req.params.id;
   try {
-    const data = await HealthApplicationModel.find({member: id, linked: true});
+    const data = await HealthApplicationModel.find({member: id});
     res.status(200).json(data);
   } catch(err) {
     res.status(400).json({

@@ -184,13 +184,14 @@ export function ApplicationForm(props) {
 }
 
 
-class HealthViewModal extends React.Component {
+export class HealthViewModal extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       id: props.id,
-      data: []
+      data: [],
+      handleApproveApplication: props.handleApproveApplication
     };
 
     this.handleLoadApplication = this.handleLoadApplication.bind(this);
@@ -269,10 +270,22 @@ class HealthViewModal extends React.Component {
         <Grid container spacing={2} sx={{ maxWidth: 700 }}>
           {itemList}
         </Grid>
+
+        <Box sx={{
+          display: 'flex', flexDirection: 'row', gap: 1,
+        }}>
+          { !data['linked'] ? (
+            <Button variant="contained" onClick={this.props.handleApproveApplication} disableElevation >
+              Approve
+            </Button>
+            ) : null
+          }
+        </Box>
       </Box>
     )
   }
 }
+
 
 
 export default class Applications extends React.Component {

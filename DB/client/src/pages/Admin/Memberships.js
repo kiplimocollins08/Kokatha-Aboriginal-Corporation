@@ -9,6 +9,7 @@ import {
   Modal,
   Grid,
   TextField,
+  ListItemButton,
 } from "@mui/material";
 
 import { DataGrid } from "@mui/x-data-grid";
@@ -29,6 +30,7 @@ import { BASE_URL } from "../../config";
 import {
   ApplicationForm,
   createData,
+  HealthViewModal,
   modalStyle,
   StyledDataGrid,
 } from "./Applications";
@@ -113,6 +115,12 @@ export default class Membership extends React.Component {
       loading: false,
 
       open: false,
+
+      openHealth: false,
+
+      currentIdHealth: null,
+      currentFormDataHealth: null,
+
       currentId: null,
       currentFormData: null,
 
@@ -131,6 +139,10 @@ export default class Membership extends React.Component {
 
     this.handleUpdateMember = this.handleUpdateMember.bind(this);
     this.handleDeleteMember = this.handleDeleteMember.bind(this);
+
+    this.handleViewHealthAppliction = this.handleViewHealthAppliction.bind(this);
+    this.handleCloseHealth = this.handleCloseHealth.bind(this);
+    this.handleApproveHealthApplication = this.handleApproveHealthApplication.bind(this);
   }
 
   componentDidMount() {
@@ -196,11 +208,13 @@ export default class Membership extends React.Component {
       .catch(function (error) {
         alert("Error opening data");
       }).finally(() => {
+        console.log("Line 209");
         console.log(this.state.currentFormData);
         var config1 = {
           method: 'get',
           url: `http://localhost:8000/api/health/member/${this.state.currentFormData._id}`,
         };
+        console.log(config1);
     
         axios(config1)
           .then((response) => {
@@ -224,6 +238,12 @@ export default class Membership extends React.Component {
     });
   }
 
+  handleOpenHealth() {
+    this.setState({
+      openHealth: true
+    })
+  }
+
   handleClose() {
     this.setState({
       open: false,
@@ -231,9 +251,39 @@ export default class Membership extends React.Component {
     });
   }
 
+  handleCloseHealth() {
+    this.setState({
+      openHealth: false
+    })
+  }
+
+
   handleApproveApplication(e) {
     const id = e.target.value;
     alert(id);
+  }
+
+  handleApproveHealthApplication() {
+    const id = this.state.currentIdHealth;
+
+    var config = {
+      method: 'put',
+      url: `${BASE_URL}/api/health/link/${id}`,
+      headers: { }
+    };
+
+    axios(config)
+      .then((response) => {
+        alert("Success");
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        alert(error.response.data["message"]);
+      }).finally(() => {
+        this.setState({
+          openHealth: false
+        })
+      })
   }
 
   async handleLoadApplications() {
@@ -411,6 +461,16 @@ export default class Membership extends React.Component {
       });
   }
 
+  handleViewHealthAppliction(id) {
+    console.log(id);
+
+    this.setState({
+      currentIdHealth: id,
+      openHealth: true,
+      // open: false
+    })
+  }
+
   render() {
     const data = this.state.currentFormData;
 
@@ -467,6 +527,13 @@ export default class Membership extends React.Component {
             Memberships
           </Typography>
         </Box>
+
+        <Modal open={this.state.openHealth} onClose={this.handleCloseHealth}>
+          <Box sx={{...modalStyle, maxWidth: 700}}>
+            {/* <ApplicationForm application_id={this.state.currentId} data={this.state.currentFormData}/> */}
+            <HealthViewModal id={this.state.currentIdHealth} handleApproveApplication={this.handleApproveHealthApplication} />
+          </Box>
+        </Modal>
 
         <Modal open={this.state.open} onClose={this.handleClose}>
           {/* <MemberPage memberData={this.state.currentFormData} healthData={this.state.currentHealthData} /> */}
@@ -613,9 +680,17 @@ export default class Membership extends React.Component {
                           <List sx={{ width: '100%', bgcolor: 'background.paper' }}  style={{maxHeight: 370, overflow: 'auto'}} >
                             {
                               this.state.currentHealthData.map(h_data => (
-                                <ListItem divider>
-                                  <ListItemText primary={h_data.reason} secondary={`\$${h_data.amount} - ${formatDate(h_data.date)}`} />
-                                </ListItem>
+                                <ListItemButton
+
+                                  onClick={() => this.handleViewHealthAppliction(h_data._id)}
+                                  divider 
+                                >
+                                  <ListItemText
+                                    primary={`${h_data.reason} - ${h_data.linked ? "approved" : "not approved"}`}
+
+                                    secondary={`\$${h_data.amount} - ${formatDate(h_data.date)}`}
+                                     />
+                                </ListItemButton>
                               ))
                             }
                           </List>
@@ -656,6 +731,8 @@ export default class Membership extends React.Component {
             </Grid>
           </Box>
         </Modal>
+
+        
         <Paper
           variant="outlined"
           elevation={0}

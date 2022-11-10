@@ -87,7 +87,7 @@ class AdminPage extends React.Component {
               aria-label="game manager tabs"
             >
                 <Tab label="Panel" {...a11yProps(0)} />
-                <Tab label="Health Applications" {...a11yProps(1)} />
+                {/* <Tab label="Health Applications" {...a11yProps(1)} /> */}
                 <Tab label="Members" {...a11yProps(2)} />
                 <Tab label="Finance" {...a11yProps(3)} />
               </Tabs>
@@ -97,13 +97,13 @@ class AdminPage extends React.Component {
               <TabPanel index={0} value={value}>
                 <AdminPanel />
               </TabPanel>
-              <TabPanel index={1} value={value}>
+              {/* <TabPanel index={1} value={value}>
                 <Applications />
-              </TabPanel>
-              <TabPanel index={2} value={value}>
+              </TabPanel> */}
+              <TabPanel index={1} value={value}>
                 <Membership />
               </TabPanel>
-              <TabPanel index={3} value={value}>
+              <TabPanel index={2} value={value}>
                 <Finance />
               </TabPanel>
           </Box>
