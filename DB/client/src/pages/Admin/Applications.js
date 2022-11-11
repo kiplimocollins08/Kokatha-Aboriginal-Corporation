@@ -230,7 +230,7 @@ export class HealthViewModal extends React.Component {
     }
 
     for (const [key, value] of Object.entries(data)) {
-      if (["__v"].includes(key))
+      if (!["__v"].includes(key))
       itemList.push(
         <Grid item xs={12} md={6} sm={6} lg={6}> { key !== "dob" && key !== "date_of_membership" ?
           <TextField

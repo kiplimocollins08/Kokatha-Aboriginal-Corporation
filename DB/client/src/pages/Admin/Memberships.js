@@ -393,9 +393,9 @@ export default class Membership extends React.Component {
   handleChangeAmount(e) {
     console.log("Change");
     console.log(e.target.value);
-    // this.setState({
-    //   add_amount: e.target.value
-    // })
+    this.setState({
+      add_amount: e.target.value
+    })
   }
 
   handleUpdateMember() {
@@ -465,7 +465,7 @@ export default class Membership extends React.Component {
 
   handleSubmitAmount() {
     var data = {
-      amount: this.state.add_amount,
+      amount: parseInt(this.state.add_amount),
     };
 
     const id = this.state.currentFormData
@@ -625,7 +625,7 @@ export default class Membership extends React.Component {
                               label="Add Amount"
                               size="small"
                               value={this.state.add_amount}
-                              onClick={this.handleChangeAmount}
+                              onChange={this.handleChangeAmount}
                               sx={{ maxWidth: "100%", width: 320 }}
                               InputProps={{
                                 readOnly: false,

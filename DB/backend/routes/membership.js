@@ -10,6 +10,7 @@ const { MembershipModel, LinkModel } = require('../models');
 
 const router = express.Router();
 
+
 function isNumeric(str) {
   if (typeof str != "string") return false;
   return !isNaN(str) && !isNaN(parseFloat(str));
@@ -77,6 +78,7 @@ router.get("/approved", async (req, res) => {
 router.put("/fund/:member_id", async (req, res) => {
   const m_id = req.params.member_id;
   const body = req.body;
+  console.log(body)
   if (!body.amount || isNumeric(body.amount)) {
     res.status(400).json({
       "message": "invalid request. bad amount",
@@ -85,8 +87,17 @@ router.put("/fund/:member_id", async (req, res) => {
   }
 
   try {
-    const member = await MembershipModel.findOne({member_id: m_id}).orFail();
-    await MembershipModel.findOneAndUpdate({member_id: m_id}, {account_balance: member.account_balance + body.amount});
+    await MembershipModel.updateMany(
+      {member_id: m_id},
+      {
+        $inc: {
+          account_balance: body.amount
+        }
+      }
+    ).orFail().then(async () => {
+      await MembershipModel.updateMany({}, { $min: { account_balance: 1000 }});
+      console.log("Done Updating");
+    });
 
     const member_new = await MembershipModel.findOne({member_id: m_id}).orFail();
     res.status(200).json({
@@ -119,11 +130,15 @@ router.put("/fund/", async (req, res) => {
         account_balance: body.amount
       }
     }
-  ).orFail()
+  ).orFail().then(async () => {
+    await MembershipModel.updateMany({}, { $min: { account_balance: 1000 }});
+    console.log("Done Updating");
+  });
 
   res.status(200).json({
     "message": "success"
   })
+
 })
 
 
