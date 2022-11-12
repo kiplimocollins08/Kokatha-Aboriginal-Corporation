@@ -51,37 +51,56 @@
           });
         })
       })
+function validateForm() {
+  let x = document.forms["myForm"]["name"].value;
+  if (x == "") {
+    alert("Name must be filled out");
+    return false;
+  }
+}
+ function myFunction() {
+        window.location.href="Than-you.html";  
+      }
+
+
     </script>
   </head>
   <body>
-    <nav class="navbar navbar-inverse">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Kokatha test</a>
-        </div>
-        <div class="collapse navbar-collapse" id="myNavbar">
-          <!-- <ul class="nav navbar-nav navbar-right"><li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li><li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li></ul> -->
-        </div>
-      </div>
-    </nav>
+    
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">Kokatha test</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="https://kokatha.com.au/">Home</a></li>
+            <li><a href="https://kokatha.com.au/member-area/">Member area</a></li>
+        <li><a href="https://kokatha.com.au/contacts/">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
     <div class="jumbotron text-center">
       <h3>Kokatha Charitable Trust Health Application Form</h3>
       <p>Please Enter Your details:</p>
     </div>
-    <form>
+
+    <form name="myForm" onsubmit="myFunction()">
+
       <div class="container">
-        <label for="name">Your name:</label>
+        <label for="name">Name:</label>
         <br>
-        <input type="text" id="name" name="name" value="" required>
+        <input type="text" id="name" name="name" placeholder="Full legal name" value="" required>
         <br>
         <label for="dob">Date Of Birth:</label>
         <br>
-        <input type="date" id="dob" name="dob" required>
+        <input type="date" id="dob" name="dob" placeholder="dd/mm/yy" required>
         <br />
         <br />
         <label for="apply_for">Apply For</label>
@@ -93,18 +112,18 @@
         <br>
         <br />
         <label for="child_name">Child's Name</label>
-        <input type="text" id="child_name" name="child_name" value="">
+        <input type="text" id="child_name" name="child_name" placeholder="child name (optional)" value="">
         <br>
         <label for="address">Your Address</label>
-        <input type="text" id="address" onFocus="geolocate()" name="address" value="" required>
+        <input type="text" id="address" onFocus="geolocate()" name="address" value="" placeholder="address" required>
         <br>
         <label for="postal">Postal address (if different from above)</label>
-        <input type="text" id="postal" name="postal" value="" required>
+        <input type="text" id="postal" name="postal" value="" placeholder="postal address" required>
         <br>
-        <label for="email">Your E-mail address</label>
+        <label for="email">E-mail address</label>
         <input type="text" id="email" name="email" value="Email" required>
         <br>
-        <label for="phone">Your Phone number</label>
+        <label for="phone">Phone number</label>
         <input type="text" id="phone" name="phone" value="phone" required>
         <br>
         <label for="member">Are you a member? (Tick if you are a Registered Member)</label>
@@ -126,7 +145,8 @@
         <input type="number" id="amount" name="amount" required>
         <br>
         <label for="reason">What are you applying for?</label>
-        <input type="text" id="reason" name="reason" value="reason" required>
+        <input type="text"  id="reason" name="reason" value="" placeholder="Medical reason (dental, check-up, vaccination ..etc)" required>
+ 
         <br>
         <label for="date">Date</label>
         <input type="date" id="date" name="date" required>
@@ -136,6 +156,11 @@
         <input type="submit" value="submit">
       </div>
     </form>
-    <a href="page-03.html">Next</a>
+<footer class="container-flex">
+         <p id="date"></p> kokatha aboriginal corporation
+            <p> Based up on https://www.kokatha.com.au/ </p>
+            <p>This is my own work as defined by the University's  Academic Misconduct policy</p>
+            
+        </footer>
   </body>
 </html>
