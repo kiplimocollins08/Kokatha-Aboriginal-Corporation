@@ -13,7 +13,17 @@ import { LoadingButton } from "@mui/lab";
 
 import { BASE_URL } from "../../config";
 
+/**
+ * Stateful Finance component that will be viewed on
+ * the financial tab.
+ */
 export class Finance extends React.Component {
+
+  /**
+   * Construct the component
+   *
+   * @param props the initial component's properties.
+   */
   constructor(props) {
     super(props);
 
@@ -39,10 +49,17 @@ export class Finance extends React.Component {
     this.handleLoadStats = this.handleLoadStats.bind(this);
   }
 
+  /**
+   * This method is called after the component has been
+   * generated, and loads the company's financial stats.
+   */
   componentDidMount() {
-    this.handleLoadStats();
+    this.handleLoadStats(); // load the stats
   }
 
+  /**
+   * Load the company's stats from the server.
+   */
   handleLoadStats() {
     const config = {
       method: "get",
@@ -63,6 +80,10 @@ export class Finance extends React.Component {
     });
   }
 
+  /**
+   * Add funds to the company's account based the
+   * user's input.
+   */
   handleUpdateAmountKokatha() {
     this.setState({
       loading_update_amount_kokatha: true,
@@ -97,6 +118,11 @@ export class Finance extends React.Component {
       });
   }
 
+  /**
+   * Update the text field value as the user types
+   * into it.
+   * @param e
+   */
   handleUpdateAmountText(e) {
     const id = e.target.id;
     const value = e.target.value;
@@ -105,6 +131,11 @@ export class Finance extends React.Component {
     });
   }
 
+  /**
+   * Returns the pages html DOM (JSX)
+   *
+   * @returns {JSX.Element}
+   */
   render() {
     const { stats } = this.state;
 

@@ -1,3 +1,5 @@
+import React from "react";
+
 import {
   Alert,
   Box,
@@ -11,24 +13,32 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from "dayjs";
-import React from "react";
+
 import { withCookies } from "react-cookie";
-import { BASE_URL } from "../config";
 import axios from "axios";
 
-function titleCase(str) {
-  str = str.toLowerCase();
-  str = str.split("_");
-  for (let i = 0; i < str.length; i++) {
-    str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
-  }
-  return str.join(" ");
-}
+import { BASE_URL } from "../config";
 
+import { titleCase } from "../utils";
+
+/**
+ * Stateful AddMember react components.
+ *
+ * Contains the forms required to send member information
+ * from the client side web app to the server application
+ * then into the database.
+ *
+ */
 class AddMember extends React.Component {
-  constructor(props) {
-    super(props);
 
+  /**
+   * Entry point of the component
+   * @param props component's properties
+   */
+  constructor(props) {
+    super(props); // pass props from the constructor's into the component
+
+    // The components variables
     this.state = {
       name: "",
       mobile: "",
@@ -58,21 +68,29 @@ class AddMember extends React.Component {
       loading: false,
     };
 
+
+    // Bind member components members to it.
     this.handleUpdateField = this.handleUpdateField.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleUpdateDate = this.handleUpdateDate.bind(this);
     this.handleUpdateDom = this.handleUpdateDom.bind(this);
   }
 
-  componentDidMount() {
+  componentDidMount() { // first method called after a component has been rendered
+
   }
 
-
+  /**
+   * Update a specific text field
+   *
+   * @param e Text field instance
+   */
   handleUpdateField(e) {
     const id = e.target.id;
     const value = e.target.value;
+
     this.setState({
-      [id]: value,
+      [id]: value, // set the passed key with the passed variable
     });
   }
 
@@ -82,48 +100,62 @@ class AddMember extends React.Component {
       dob: value
     })
   }
-  
+
+  /**
+   * Handle update Date of Month value
+   * @param value current selected date
+   */
   handleUpdateDom(value) {
     this.setState({
       date_of_membership: value
     })
   }
 
+  /**
+   * Submits the user's information to the database.
+   */
   handleSubmit() {
     this.setState({
-      loading: true,
+      loading: true,                                     // Set loading to true, to visually show the user that the submission process has began.
     });
 
-    const data = JSON.stringify(this.state);
+    const data = JSON.stringify(this.state);             // Convert the class state object to string value
 
+    // Set the POST request parameters
     const config = {
-      method: 'POST',
-      url: `${BASE_URL}/api/membership/create_member`,
-      headers: {
-        'Content-Type': 'application/json',
+      method: 'POST',                                    // POST request to send data to the server
+      url: `${BASE_URL}/api/membership/create_member`,   // set the URL
+      headers: {                                         // Define the header metadata, set the content-type to
+        'Content-Type': 'application/json',              // JSON since we're posting JSON data.
         'Access-Control-Allow-Origin': '*'
       },
-      data: data
+      data: data                                         // Set the data
     };
 
-    axios.request(config).then(function(res) {
+    axios.request(config).then(function(res) {  // Handle on successful posting
       console.log(res.data);
-    }).catch(function(err) {
-      console.log(err);
-    }).finally(() => {
-      this.setState({
+      alert("Success");                                               // inform the user
+    }).catch(function(err) {                                          // Handle on error
+      console.log(err);                                               // log the error and alert the user
+      alert("Failed")
+    }).finally(() => {                                    // Finally,
+      this.setState({                                         // Set the loading variable to false; showing that the process is done.
         loading: false,
       })
     })
   }
+
+  /**
+   * Returns the JSX values of this component.
+   * Will be called each time the state changes.
+   * @returns {JSX.Element}
+   */
   render() {
     const status = { type: "", label: "", message: "" }
-    const { application_status } = this.state;
-    if (application_status === 0) {
-      status["type"] = "info";
-      status["label"] = "Awaiting approval";
-      status["message"] = "We are accessing your application";
-    } else if (application_status === 1) {
+    const { application_status } = this.state; // get the form status from the state
+                                               // this will help in presenting the error messages to the user
+
+    if (application_status === 1) {
       status["type"] = "warning";
       status["label"] = "Correct your form";
       status["message"] = this.state.application_message;

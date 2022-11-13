@@ -6,13 +6,20 @@ import Home from "./pages/Home";
 
 import MembershipApplication from "./pages/AddMember";
 
+/**
+ * Routes component that matches a specific route
+ * to a specific page.
+ *
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function MRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />}>
           <Route index element={<Home />}/>
-          <Route path="application" element={<MembershipApplication />} />
+          <Route path="add_member" element={<MembershipApplication />} />
           <Route path="admin" element={<Admin />} />
         </Route>
       </Routes>

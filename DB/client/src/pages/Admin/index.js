@@ -6,8 +6,15 @@ import Membership from "./Memberships";
 import AdminPanel from "./AdminPanel";
 import { Finance } from "./Finance";
 
+/**
+ * Custom TabPanel component that holds the tab buttons.
+ *
+ * @param props tab properties
+ * @returns {JSX.Element}
+ * @constructor
+ */
 function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+  const { children, value, index, ...other } = props; // Get prop values
   return (
       <div
           role="tabpanel"
@@ -15,7 +22,8 @@ function TabPanel(props) {
           id={`admin-tabpanel-${index}`}
           {...other}
       >
-        {value === index && (
+        {value === index && ( // Only show the tabs children when its index is similar to
+                              // the index of the currently viewed tab.
             <Box sx={{p: 3}}>
               {children}
             </Box>
@@ -24,12 +32,26 @@ function TabPanel(props) {
   )
 }
 
+/**
+ * Define the data types and other properties of the variables
+ * to be passed into the TabPanel via props.
+ *
+ * @type {{children: Requireable<ReactNodeLike>, index: Validator<NonNullable<number>>, value: Validator<NonNullable<number>>}}
+ */
 TabPanel.propTypes = {
   children: PropTypes.node,
   index: PropTypes.number.isRequired,
   value: PropTypes.number.isRequired,
 };
 
+/**
+ * Forward a dictionary of properties of a tab,
+ * prevents rewriting the properties each time we declare
+ * a tab object.
+ *
+ * @param index
+ * @returns {{"aria-controls": string, id: string}}
+ */
 function a11yProps(index) {
   return {
     id: `admin-tab-${index}`,
@@ -37,6 +59,9 @@ function a11yProps(index) {
   };
 }
 
+/**
+ * The Stateful admin component that houses the tab menus.
+ */
 class AdminPage extends React.Component {
   constructor(props) {
     super(props);
@@ -48,12 +73,23 @@ class AdminPage extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  /**
+   * Changes the value that represents the index of the
+   * tab to be viewed.
+   *
+   * @param newValue index of the tab to view.
+   */
   handleChange(newValue) {
     this.setState({
       value: newValue,
     });
   }
 
+  /**
+   * Returns the pages html DOM (JSX
+   *
+   * @returns {JSX.Element}
+   */
   render() {
     const { value } = this.state;
 

@@ -27,6 +27,12 @@ import axios from "axios";
 
 import { BASE_URL } from "../../config";
 
+/**
+ * A dictionary holding the default modal css
+ * styles.
+ *
+ * @type {{border: string, p: number, boxShadow: number, transform: string, bgcolor: string, top: string, left: string, maxHeight: string, width: number, position: string}}
+ */
 export const modalStyle = {
   position: 'absolute',
   top: '50%',
@@ -40,6 +46,12 @@ export const modalStyle = {
   p: 4,
 };
 
+/**
+ * A @mui styled object that holds the styles
+ * of the data grid (table)
+ *
+ * @type {StyledComponent<PropsOf<DataGridComponent> & MUIStyledCommonProps<Theme>, {}, {}>}
+ */
 export const StyledDataGrid = styled(DataGrid)(() => ({
   '& .MuiDataGrid-columnHeaderTitle': {
     fontWeight: 500,
@@ -47,7 +59,15 @@ export const StyledDataGrid = styled(DataGrid)(() => ({
   }
 }));
 
+
+/**
+ * Modal object that will be rendered when viewing a health application.
+ */
 class HealthViewModal extends React.Component {
+  /**
+   * Construct the modal.
+   * @param props initial properties and data
+   */
   constructor(props) {
     super(props);
 
@@ -60,10 +80,18 @@ class HealthViewModal extends React.Component {
     this.handleLoadApplication = this.handleLoadApplication.bind(this);
   }
 
+  /**
+   * First method called by React, after component has been rendered.
+   * It will load the application information.
+   */
   componentDidMount() {
     this.handleLoadApplication();
   }
 
+  /**
+   * Load the current health application data, and update
+   * the component's state.
+   */
   handleLoadApplication() {
     const config = {
       method: 'get',
@@ -79,12 +107,17 @@ class HealthViewModal extends React.Component {
     })
   }
 
+  /**
+   * Returns the pages html DOM (JSX
+   *
+   * @returns {JSX.Element}
+   */
   render() {
     const { data } = this.state;
 
     const itemList = [];
 
-    if (!data) {
+    if (!data) { // if there's no data, render and empty view.
       return (
           <Box>
             Empty
@@ -92,10 +125,12 @@ class HealthViewModal extends React.Component {
       )
     }
 
-    for (const [key, value] of Object.entries(data)) {
-      if (!["__v"].includes(key))
-        itemList.push(
-            <Grid item xs={12} md={6} sm={6} lg={6}> { key !== "dob" && key !== "date_of_membership" ?
+    for (const [key, value] of Object.entries(data)) {         // Iterate over the JSON object containing the application.
+      if (!["__v"].includes(key))                              // Ignore certain fields which are not necessary to be viewed
+        itemList.push(                                         // Create a grid item to hold the field value and push
+                                                               // them into an array.
+            <Grid item xs={12} md={6} sm={6} lg={6}>
+              { key !== "dob" && key !== "date_of_membership" ?
                 <TextField
                     id={key}
                     label={titleCase(key)}
@@ -151,6 +186,15 @@ class HealthViewModal extends React.Component {
 }
 
 
+/**
+ * Create a member's data object that will be rendered in a data grid row.
+ *
+ * @param id of the member
+ * @param data the object containing member's information
+ * @param handleView method to view a member object
+ * @param handleApprove method to approve a member's application
+ * @returns {{approved, balance: (number|*), data, name, mobile: (string|{type: String | StringConstructor, required: boolean}|*), handleView, id, aid: (null|*), handleApprove, account, email}}
+ */
 export function createData(id, data, handleView, handleApprove) {
   return {
     id: id,
@@ -167,6 +211,7 @@ export function createData(id, data, handleView, handleApprove) {
   }
 }
 
+// A schema of how the member item row will be generated.
 // noinspection JSUnusedGlobalSymbols
 const dataColumnsMembers = [
   {
@@ -220,6 +265,13 @@ const dataColumnsMembers = [
   },
 ];
 
+/**
+ * Converts any text separated by '-', from its
+ * current case to title case
+ *
+ * @param str The string to convert
+ * @returns {string}
+ */
 function titleCase(str) {
   str = str.toLowerCase();
   str = str.split("_");
@@ -229,13 +281,28 @@ function titleCase(str) {
   return str.join(" ");
 }
 
+/**
+ * Formats the date to human-readable form.
+ *
+ * @param date to format
+ * @returns {string}
+ */
 function formatDate(date) {
   if (!date) return "None";
   const d = new Date(date);
   return d.toLocaleDateString("en-UK");
 }
 
+
+/**
+ * The Membership component that will be rendered in the
+ * Membership tab.
+ */
 export default class Membership extends React.Component {
+  /**
+   * Construct the membership.
+   * @param props the initial properties
+   */
   constructor(props) {
     super(props);
 
@@ -276,23 +343,30 @@ export default class Membership extends React.Component {
     this.handleReloadView = this.handleReloadView.bind(this);
   }
 
+  /**
+   * First method run after component has been rendered.
+   */
   componentDidMount() {
     // noinspection JSIgnoredPromiseFromCall
     this.handleLoadApplications();
   }
 
+  /**
+   * View a members information.
+   * @param e
+   */
   handleViewApplication(e) {
     const id = e.target.value;
     const { members } = this.state;
 
     for (let i = 0; i < this.state.members.length; i++) {
-      if (members[i].aid === id) {
+      if (members[i].aid === id) { // Check that the member id exists in the state.
         const config1 = {
           method: "get",
           url: `http://localhost:8000/api/health/member/${id}`,
         };
 
-        axios(config1)
+        axios(config1)                   // Load the member from the server
           .then((response) => {
             this.setState({
               currentHealthData: response.data,
@@ -355,6 +429,9 @@ export default class Membership extends React.Component {
       });
   }
 
+  /**
+   * Reload the health data after it has been modified.
+   */
   handleReloadView() {
     const config1 = {
       method: "get",
@@ -378,12 +455,19 @@ export default class Membership extends React.Component {
       });
   }
 
+  /**
+   * Open the member's modal, to view it.
+   */
   handleOpen() {
     this.setState({
       open: true,
     });
   }
 
+  /**
+   * Close the current application and reset the current
+   * member's id.
+   */
   handleClose() {
     this.setState({
       open: false,
@@ -391,17 +475,28 @@ export default class Membership extends React.Component {
     });
   }
 
+  /**
+   * Close the health application view modal.
+   */
   handleCloseHealth() {
     this.setState({
       openHealth: false,
     });
   }
 
+  /**
+   * dep
+   * @param e
+   */
   handleApproveApplication(e) {
     const id = e.target.value;
     alert(id);
   }
 
+  /**
+   * Approve a health application and alert the user
+   * whether it has been accepted or rejected.
+   */
   handleApproveHealthApplication() {
     const id = this.state.currentIdHealth;
 
@@ -424,6 +519,10 @@ export default class Membership extends React.Component {
       });
   }
 
+  /**
+   * Load the members' applications.
+   * @returns {Promise<void>}
+   */
   async handleLoadApplications() {
     this.setState({ loading: true });
 
@@ -483,6 +582,10 @@ export default class Membership extends React.Component {
       });
   }
 
+  /**
+   * Change the amount which is to be funded to a user's account.
+   * @param e
+   */
   handleChangeAmount(e) {
     console.log("Change");
     console.log(e.target.value);
@@ -491,6 +594,9 @@ export default class Membership extends React.Component {
     })
   }
 
+  /**
+   * Update the members information based on the currently edited values.
+   */
   handleUpdateMember() {
     const data = this.state.currentFormData;
     delete data["_id"];
@@ -520,6 +626,9 @@ export default class Membership extends React.Component {
       });
   }
 
+  /**
+   * Delete a member's information.
+   */
   handleDeleteMember() {
     if (!this.state.currentId) return;
 
@@ -546,6 +655,13 @@ export default class Membership extends React.Component {
       });
   }
 
+  /**
+   * Update the values of the member based on
+   * the user's input to the fields text fields and
+   * date picker.s
+   *
+   * @param e
+   */
   handleChangeField(e) {
     const id = e.target.id;
     const value = e.target.value;
@@ -555,6 +671,9 @@ export default class Membership extends React.Component {
     });
   }
 
+  /**
+   * Submit amount to fund a user's account.
+   */
   handleSubmitAmount() {
     const data = {
       amount: parseInt(this.state.add_amount),
@@ -587,6 +706,11 @@ export default class Membership extends React.Component {
       });
   }
 
+  /**
+   * View the selected health application.
+   *
+   * @param id of the health application.
+   */
   handleViewHealthApplication(id) {
     console.log(id);
 
@@ -596,6 +720,10 @@ export default class Membership extends React.Component {
     });
   }
 
+  /**
+   * Returns the pages html DOM (JSX
+   * @returns {JSX.Element}
+   */
   render() {
     const data = this.state.currentFormData;
 

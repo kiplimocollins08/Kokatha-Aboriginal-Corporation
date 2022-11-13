@@ -14,6 +14,9 @@ import { BASE_URL } from '../../config';
 
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
+/**
+ * State ful admin panel. The first tab of the admin page.
+ */
 export default class AdminPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -29,13 +32,19 @@ export default class AdminPanel extends React.Component {
     this.handleMembersFileUpload = this.handleMembersFileUpload.bind(this);
   }
 
+  /**
+   * Handles the uploading process. Prompts the user for a file
+   * and submits it to the server.
+   *
+   * @param e Button instance
+   */
   handleMembersFileUpload(e) {
-    if (!e.target.files) {
+    if (!e.target.files) {                      // Validate that a file has been selected.
       return
     }
 
-    const file = e.target.files[0];
-    const formData = new FormData();
+    const file = e.target.files[0];            // Select the first file.
+    const formData = new FormData();           // Create a form object to hold the form.
     formData.append("members", file);
 
     const options = {
@@ -59,6 +68,11 @@ export default class AdminPanel extends React.Component {
     })
   }
 
+  /**
+   * Returns the pages html DOM (JSX)
+   *
+   * @returns {JSX.Element}
+   */
   render() {
     return(
         <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 500 }}>

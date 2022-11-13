@@ -1,31 +1,51 @@
 import React from 'react';
 
+// Mui UI Kit Components,
 import { AppBar, Button, CssBaseline, IconButton, Toolbar, Typography } from "@mui/material";
-
 import Box from "@mui/material/Box";
-
-import { Outlet, useNavigate } from "react-router-dom";
 import { ThemeProvider } from '@mui/material/styles';
-
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+
+import {
+  Outlet, // pass react pages into routes
+  useNavigate // change routes, without reloading the page
+} from "react-router-dom";
+
 
 import { theme } from './Mtheme';
 
+/**
+ * Top app bar component. Houses our navigation routes; admin, application, home
+ *
+ * @param props any properties
+ * @returns {JSX.Element}
+ * @constructor
+ */
 function TopAppBar(props) {
-  const { navigate } = props;
+  const { navigate } = props; // get navigate from props
 
+  /**
+   * Handle home navigations
+   */
   const handleHomePage = () => {
-    navigate("/");
+    navigate("/"); // change to base route /
   }
 
-  const handleApplyPage = () => {
-    navigate("/application");
+  /**
+   * Handle add member
+   */
+  const handleAddMemberPage = () => {
+    navigate("/add_member"); // change to /application router
   }
 
+  /**
+   * Handle admin page navigation
+   */
   const handleAdminPage = () => {
     navigate("/admin");
   }
 
+  // Return DOM object, to be rendered
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" elevation={0}>
@@ -43,7 +63,7 @@ function TopAppBar(props) {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {props.title}
           </Typography>
-          <Button color="inherit" onClick={handleApplyPage}>Add Member</Button>
+          <Button color="inherit" onClick={handleAddMemberPage}>Add Member</Button>
 
           <Button color="inherit" onClick={handleAdminPage}>Admin</Button>
         </Toolbar>
@@ -52,15 +72,19 @@ function TopAppBar(props) {
   )
 }
 
+/**
+ * Stateful AppComponent. Renders the main page.
+ */
 class AppComponent extends React.Component {
   constructor(props) {
     super(props);
 
+    // Store component variables.
     this.state = {
       title: "Kokatha Membership Database"
     }
 
-    this.handleSetTitle = this.handleSetTitle.bind(this);
+    this.handleSetTitle = this.handleSetTitle.bind(this); // Bind function to `this` component.
   }
 
   handleSetTitle(title) {
@@ -69,7 +93,13 @@ class AppComponent extends React.Component {
     })
   }
 
+  /**
+   * React component method that renders the JSX to html DOM
+   *
+   * @returns {JSX.Element}
+   */
   render() {
+
     return (
       <ThemeProvider theme={theme}>
       <React.Fragment>
@@ -86,7 +116,7 @@ class AppComponent extends React.Component {
           >
             <TopAppBar title={this.state.title} navigate={this.props.navigate} />
 
-            <Outlet setTitle={this.handleSetTitle} />
+            <Outlet setTitle={this.handleSetTitle} /> {/* Redirect child pages based on router; Home, Admin,  --> */}
           </Box>
       </React.Fragment>
       </ThemeProvider>
@@ -95,8 +125,15 @@ class AppComponent extends React.Component {
 }
 
 
+/**
+ * Entry point to our main page
+ *
+ * @param props any properties that we pass into our child nodes
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function App(props) {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // useNavigate instance
 
   return <AppComponent {...props} navigate={navigate} />
 }
