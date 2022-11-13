@@ -1,27 +1,19 @@
+/**
+ *  Mongoose Schema for Membership model
+ *  @module models/membership
+ *
+ *  @requires mongoose
+ */
+
+
 const mongoose = require('mongoose');
 
-const memberhipSchema = new mongoose.Schema({
+const membershipSchema = new mongoose.Schema({
   name: {
     required: false,
     type: String,
     default: ""
   },
-  // first_name: {
-  //   required: true,
-  //   type: String
-  // },
-  // last_name: {
-  //   required: true,
-  //   type: String
-  // },
-  // single_name: {
-  //   required: true,
-  //   type: String
-  // },
-  // aka: {
-  //   required: false,
-  //   type: String
-  // },
   mobile: {
     required: true,
     type: String
@@ -31,21 +23,13 @@ const memberhipSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
-  // home_phone: {
-  //   required: true,
-  //   type: String
-  // },
   work_phone: {
     required: false,
     default: "-",
     type: String
   },
   member_id: {
-  //   required: true,
     type: String,
-
-  //   unique: true,
-  //   dropDups: true,
   },
   street_address: {
     required: true,
@@ -72,10 +56,9 @@ const memberhipSchema = new mongoose.Schema({
     default: 2000.,
     type: Number
   }
-}, 
-{ 
+}, {
   strict: true,
   strictQuery: true
 });
 
-module.exports = mongoose.model('MembershipModel', memberhipSchema);
+module.exports = mongoose.model('MembershipModel', membershipSchema);

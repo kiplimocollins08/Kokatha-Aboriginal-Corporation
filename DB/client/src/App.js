@@ -1,7 +1,9 @@
 import React from 'react';
 
 import { AppBar, Button, CssBaseline, IconButton, Toolbar, Typography } from "@mui/material";
+
 import Box from "@mui/material/Box";
+
 import { Outlet, useNavigate } from "react-router-dom";
 import { ThemeProvider } from '@mui/material/styles';
 
@@ -11,10 +13,6 @@ import { theme } from './Mtheme';
 
 function TopAppBar(props) {
   const { navigate } = props;
-
-  const handleLoginPage = () => {
-    navigate("/login");
-  }
 
   const handleHomePage = () => {
     navigate("/");
@@ -26,10 +24,6 @@ function TopAppBar(props) {
 
   const handleAdminPage = () => {
     navigate("/admin");
-  }
-
-  const handleAddHealthApplication = () => {
-    navigate("/health");
   }
 
   return (

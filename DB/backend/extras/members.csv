@@ -1,6 +1,4 @@
-name,mobile,email,home_phone,member_id,street_address,suburb,state,dob,date_of_membership,account_balance
-Collins Kiplimo,61423567876,kiplimocollins08@gmail.com,61423567876,M00045,71 Elizabeth rd,Morphett Vale,SA,2000-08-08T21:00:00.000Z,2006-12-31T21:00:00.000Z,1000
-Bavindu Aseeshan,61456345543,bavindu89@hotmail.com,61456345543,M00046,22 Home Ground,Woodcroft,SA,1991-10-08T21:00:00.000Z,2007-12-31T21:00:00.000Z,1000
-Wimalasooriya Mudinselage,61441234432,aseeshan11@gmail.com,61441234432,M00047,74 Elizabeth Ct,Kilburn,SA,1998-01-08T21:00:00.000Z,2018-12-31T21:00:00.000Z,1000
-Shane Ward,61424142867,dahby006@unisa.edu.au,61424142867,M00048,40 cascades drive mawson lakes ,Elizabeth,SA,2002-09-08T21:00:00.000Z,2021-12-31T21:00:00.000Z,1000
-Robb Willis,61456345543,willis254@gmail.com,61456345543,M00049,8/60 augustine street ,Mawson lakes,SA,1992-11-08T21:00:00.000Z,2017-12-31T21:00:00.000Z,1000
+first_name,last_name,single_name,aka,mobile,email,home_phone,work_phone,member_id,street_address,suburb,state,dob,date_of_membership,account_balance
+Michael,Mudiyanselage,Michael,Mike,61423567876,mikemudiya12@gmail.com,61423567876,61423567876,M00028,79 Elizabeth,Morphett Vale,SA,1990-08-08T21:00:00.000Z,2006-12-31T21:00:00.000Z,1000
+Jane,Ashen,Jane,Janey,61456345543,joebbb@hotmail.com,61456345543,61456345543,M00024,2 Home Ground,Morphett Vale,SA,1991-08-08T21:00:00.000Z,2007-12-31T21:00:00.000Z,1000
+Kipkorir,Selage,Kipkorir,KipK,61441234432,kipsel18@gmail.com,61441234432,61441234432,M00025,7 Elizabeth Ct,Kilburn,SA,1992-08-08T21:00:00.000Z,2017-12-31T21:00:00.000Z,1000

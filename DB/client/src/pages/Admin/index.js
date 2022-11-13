@@ -1,16 +1,13 @@
 import React from "react";
 
-import { Box, Tab, Tabs, Typography, Container } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Box, Tab, Tabs, Container } from "@mui/material";
 import PropTypes from "prop-types";
-import Applications from "./Applications";
 import Membership from "./Memberships";
 import AdminPanel from "./AdminPanel";
 import { Finance } from "./Finance";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-
   return (
       <div
           role="tabpanel"
@@ -26,7 +23,6 @@ function TabPanel(props) {
       </div>
   )
 }
-
 
 TabPanel.propTypes = {
   children: PropTypes.node,
@@ -87,7 +83,6 @@ class AdminPage extends React.Component {
               aria-label="game manager tabs"
             >
                 <Tab label="Panel" {...a11yProps(0)} />
-                {/* <Tab label="Health Applications" {...a11yProps(1)} /> */}
                 <Tab label="Members" {...a11yProps(2)} />
                 <Tab label="Finance" {...a11yProps(3)} />
               </Tabs>
@@ -97,9 +92,6 @@ class AdminPage extends React.Component {
               <TabPanel index={0} value={value}>
                 <AdminPanel />
               </TabPanel>
-              {/* <TabPanel index={1} value={value}>
-                <Applications />
-              </TabPanel> */}
               <TabPanel index={1} value={value}>
                 <Membership />
               </TabPanel>

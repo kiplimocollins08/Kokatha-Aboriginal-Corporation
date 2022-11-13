@@ -1,9 +1,25 @@
+/**
+ *  Express router to manipulate financials
+ *  @module routes/financials
+ *
+ *  @requires express
+ */
+
 const express = require('express');
 
 const { FinanceModel, MembershipModel, HealthApplicationModel } = require('../models');
 
 const router = express.Router();
 
+/**
+ * Route to get all transactions
+ *
+ * @name /transactions
+ * @inner
+ * @param {object} req request object passed from the client, contains http request body
+ * @param {object} res router response sent to the client
+ *
+ */
 router.get("/transactions", async (req, res) => {
   try {
     const data = await FinanceModel.find();
@@ -16,14 +32,26 @@ router.get("/transactions", async (req, res) => {
   }
 })
 
+/**
+ * Route to fund kokatha company accounts.
+
+ * @name /fund
+ * @inner
+ * @param {object} req request object passed from the client, contains http request body
+ * @param {object} res router response sent to the client
+ *
+ */
 router.post("/fund", async (req, res) => {
   try {
+    // Create a financial object
     const data = new FinanceModel({
       amount: req.body.amount,
       type: "MONEY_IN",
-      comment: "Upload"
+      comment: "Finance Kokatha Company"
     });
-    await data.save();
+
+    await data.save(); // save the model
+
     res.status(201).json({
       "message": "update",
       "data": data
@@ -36,9 +64,19 @@ router.post("/fund", async (req, res) => {
   }
 })
 
+/**
+ * Route to get the current financials stats
+ *
+ * @name /create_member
+ * @inner
+ * @param {object} req request object passed from the client, contains http request body
+ * @param {object} res router response sent to the client
+ *
+ */
 router.get("/stats", async (req, res) => {
 
   try {
+    // Sum of the money that has been financed into the company.
     const balance = await FinanceModel.aggregate([
       {
         $match: {
@@ -53,6 +91,7 @@ router.get("/stats", async (req, res) => {
       }
     ])
 
+    // Sum of money allocated to members
     const allocated = await MembershipModel.aggregate([
       {
         $group: {
@@ -62,6 +101,7 @@ router.get("/stats", async (req, res) => {
       }
     ])
 
+    // Sum of money used in approved health applications
     const used = await HealthApplicationModel.aggregate([
       {
         $match: {

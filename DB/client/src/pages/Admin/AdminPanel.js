@@ -1,13 +1,7 @@
 import React from 'react';
 
 import {
-  CircularProgress, Paper,
   Typography,
-  Button,
-  styled,
-  Modal,
-  Grid,
-  TextField,
   Divider
 } from "@mui/material";
 
@@ -24,19 +18,14 @@ export default class AdminPanel extends React.Component {
   constructor(props) {
     super(props);
 
-
     this.state = {
-      update_amount: 1500,
-      loading_update_amount: false,
 
       uploading_members: false,
-
 
       members_file: null,
       health_file: null,
     }
 
-    this.handleUpdateAmount = this.handleUpdateAmount.bind(this);
     this.handleMembersFileUpload = this.handleMembersFileUpload.bind(this);
   }
 
@@ -58,7 +47,7 @@ export default class AdminPanel extends React.Component {
       data: formData
     }
 
-    axios.request(options).then((response) => {
+    axios.request(options).then(() => {
       alert("Uploaded Successfully");
     }).catch((error) => {
       alert("Failed to upload");
@@ -70,37 +59,6 @@ export default class AdminPanel extends React.Component {
     })
   }
 
-  handleUpdateAmount() {
-    this.setState({
-      loading_update_amount: true
-    })
-
-    var config = {
-      method: 'put',
-      url: `${BASE_URL}/api/membership/fund/`,
-      headers: { 
-        'Content-Type': 'application/json'
-      },
-      data : {
-        "amount": this.state.update_amount
-      }
-    };
-
-
-    axios(config)
-      .then(function (response) {
-        alert("Success");
-      })
-      .catch(function (error) {
-        alert("Failed");
-      }).finally(() => {
-        this.setState({
-          loading_update_amount: false
-        })
-      })
-
-  }
-
   render() {
     return(
         <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 500 }}>
@@ -109,42 +67,12 @@ export default class AdminPanel extends React.Component {
               Admin Panel
             </Typography>
           </Box>
-
           <Divider />
-
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, m: 1 }}>
-            {/* <Typography>
-              Fund All Members
-            </Typography>
-
-            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, my: 0 }}>
-              <TextField
-                id="tx_fund_amount"
-                label="Amount"
-                value={this.state.update_amount}
-                size="small"
-                sx={{ maxWidth: "100%", width: 320 }}
-                InputProps={{
-                  readOnly: false,
-                }}
-              />
-
-              <LoadingButton 
-                variant="contained"
-                loading={this.state.loading_update_amount}
-                onClick={this.handleUpdateAmount}
-                disableElevation>
-                Fund Accounts
-              </LoadingButton>
-            </Box> */}
-
-
             <Typography>
               Upload Existing Members (.csv file)
             </Typography>
-
             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
-
               <LoadingButton
                 loading={this.state.uploading_members}
                 variant="contained"
@@ -155,7 +83,6 @@ export default class AdminPanel extends React.Component {
                 Upload Profile
                 <input type="file" hidden accept=".csv" onChange={this.handleMembersFileUpload}/>
               </LoadingButton>
-            
             </Box>
             <Divider />
           </Box>

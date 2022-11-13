@@ -7,7 +7,6 @@ import { createTheme } from "@mui/material";
 
 const LinkBehavior = React.forwardRef((props, ref) => {
   const { href, ...other } = props;
-  // Map href (MUI) -> to (react-router)
   return <RouterLink data-testid="custom-link" ref={ref} to={href} {...other} />;
 });
 
@@ -28,6 +27,7 @@ export const theme = createTheme({
       main: '#ff6600'
     }
   },
+
   components: {
     MuiLink: {
       defaultProps: {

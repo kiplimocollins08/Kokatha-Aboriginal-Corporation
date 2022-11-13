@@ -13,12 +13,12 @@ import {
 } from "@mui/material";
 
 import { DataGrid } from "@mui/x-data-grid";
+
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
 
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 
 import Box from "@mui/material/Box";
@@ -27,15 +27,147 @@ import axios from "axios";
 
 import { BASE_URL } from "../../config";
 
-import {
-  ApplicationForm,
-  createData,
-  HealthViewModal,
-  modalStyle,
-  StyledDataGrid,
-} from "./Applications";
-import MemberPage, { MemberPageModal } from "./modals/MemberPage";
+export const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 700,
+  maxHeight: '95%',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
+export const StyledDataGrid = styled(DataGrid)(() => ({
+  '& .MuiDataGrid-columnHeaderTitle': {
+    fontWeight: 500,
+    fontFamily: 'GT Walsheim Pro'
+  }
+}));
+
+class HealthViewModal extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      id: props.id,
+      data: [],
+      handleApproveApplication: props.handleApproveApplication
+    };
+
+    this.handleLoadApplication = this.handleLoadApplication.bind(this);
+  }
+
+  componentDidMount() {
+    this.handleLoadApplication();
+  }
+
+  handleLoadApplication() {
+    const config = {
+      method: 'get',
+      url: `${BASE_URL}/api/health/id/${this.state.id}`,
+    };
+
+    axios(config).then((res) => {
+      this.setState({
+        data: res.data
+      })
+    }).catch(function(error) {
+      console.log(error);
+    })
+  }
+
+  render() {
+    const { data } = this.state;
+
+    const itemList = [];
+
+    if (!data) {
+      return (
+          <Box>
+            Empty
+          </Box>
+      )
+    }
+
+    for (const [key, value] of Object.entries(data)) {
+      if (!["__v"].includes(key))
+        itemList.push(
+            <Grid item xs={12} md={6} sm={6} lg={6}> { key !== "dob" && key !== "date_of_membership" ?
+                <TextField
+                    id={key}
+                    label={titleCase(key)}
+                    value={value}
+                    size="small"
+                    sx={{ maxWidth: "100%", width: 320 }}
+                    InputProps={{
+                      readOnly: false,
+                    }}
+                />
+
+                :
+
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DesktopDatePicker
+                      id={key}
+                      label={titleCase(key)}
+                      value={value}
+                      onChange={(f) => f}
+                      readOnly={true}
+                      renderInput={(params) => <TextField {...params}  size="small"  InputProps={{
+                        readOnly: false,
+                      }}  sx={{ maxWidth: "100%", width: 320 }} />}
+                  />
+                </LocalizationProvider>
+            }
+            </Grid>
+        )
+    }
+
+    return (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Typography variant="subtitle1" gutterBottom>
+            Health Application Form
+          </Typography>
+          <Grid container spacing={2} sx={{ maxWidth: 700 }}>
+            {itemList}
+          </Grid>
+
+          <Box sx={{
+            display: 'flex', flexDirection: 'row', gap: 1,
+          }}>
+            { !data['linked'] ? (
+                <Button variant="contained" onClick={this.props.handleApproveApplication} disableElevation >
+                  Approve
+                </Button>
+            ) : null
+            }
+          </Box>
+        </Box>
+    )
+  }
+}
+
+
+export function createData(id, data, handleView, handleApprove) {
+  return {
+    id: id,
+    aid: data._id,
+    account: data.account,
+    name: data.name,
+    email: data.email,
+    mobile: data.mobile,
+    approved: data.approved,
+    balance: data.account_balance,
+    handleView: handleView,
+    handleApprove: handleApprove,
+    data: data
+  }
+}
+
+// noinspection JSUnusedGlobalSymbols
 const dataColumnsMembers = [
   {
     field: "id",
@@ -91,7 +223,7 @@ const dataColumnsMembers = [
 function titleCase(str) {
   str = str.toLowerCase();
   str = str.split("_");
-  for (var i = 0; i < str.length; i++) {
+  for (let i = 0; i < str.length; i++) {
     str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
   }
   return str.join(" ");
@@ -100,17 +232,6 @@ function titleCase(str) {
 function formatDate(date) {
   if (!date) return "None";
   const d = new Date(date);
-  var datestring =
-    d.getDate() +
-    "-" +
-    (d.getMonth() + 1) +
-    "-" +
-    d.getFullYear() +
-    " " +
-    d.getHours() +
-    ":" +
-    d.getMinutes();
-  // console.log(d);
   return d.toLocaleDateString("en-UK");
 }
 
@@ -148,16 +269,15 @@ export default class Membership extends React.Component {
     this.handleUpdateMember = this.handleUpdateMember.bind(this);
     this.handleDeleteMember = this.handleDeleteMember.bind(this);
 
-    this.handleViewHealthAppliction =
-      this.handleViewHealthAppliction.bind(this);
+    this.handleViewHealthApplication = this.handleViewHealthApplication.bind(this);
     this.handleCloseHealth = this.handleCloseHealth.bind(this);
-    this.handleApproveHealthApplication =
-      this.handleApproveHealthApplication.bind(this);
+    this.handleApproveHealthApplication = this.handleApproveHealthApplication.bind(this);
 
     this.handleReloadView = this.handleReloadView.bind(this);
   }
 
   componentDidMount() {
+    // noinspection JSIgnoredPromiseFromCall
     this.handleLoadApplications();
   }
 
@@ -166,17 +286,14 @@ export default class Membership extends React.Component {
     const { members } = this.state;
 
     for (let i = 0; i < this.state.members.length; i++) {
-      if (members[i].aid == id) {
-        var config1 = {
+      if (members[i].aid === id) {
+        const config1 = {
           method: "get",
           url: `http://localhost:8000/api/health/member/${id}`,
         };
 
         axios(config1)
           .then((response) => {
-            console.log("Viws");
-            console.log(response.data);
-
             this.setState({
               currentHealthData: response.data,
               currentId: id,
@@ -188,17 +305,11 @@ export default class Membership extends React.Component {
             console.log(error);
             alert("Error");
           });
-
-        // this.setState({
-        //   currentId: id,
-        //   currentFormData: members[i].data,
-        //   open: true,
-        // });
         return;
       }
     }
 
-    var config = {
+    const config = {
       method: "get",
       url: `${BASE_URL}/api/membership/id/${id}`,
       headers: {
@@ -218,12 +329,13 @@ export default class Membership extends React.Component {
       })
       .catch(function (error) {
         alert("Error opening data");
+        console.log(error);
       })
       .finally(() => {
         console.log("Line 209");
         console.log(this.state.currentFormData);
 
-        var config1 = {
+        const config1 = {
           method: "get",
           url: `http://localhost:8000/api/health/member/${this.state.currentFormData._id}`,
         };
@@ -232,9 +344,6 @@ export default class Membership extends React.Component {
 
         axios(config1)
           .then((response) => {
-            console.log("Viws");
-            console.log(response.data);
-
             this.setState({
               currentHealthData: response.data,
             });
@@ -247,7 +356,7 @@ export default class Membership extends React.Component {
   }
 
   handleReloadView() {
-    var config1 = {
+    const config1 = {
       method: "get",
       url: `http://localhost:8000/api/health/member/${this.state.currentId}`,
     };
@@ -275,12 +384,6 @@ export default class Membership extends React.Component {
     });
   }
 
-  handleOpenHealth() {
-    this.setState({
-      openHealth: true,
-    });
-  }
-
   handleClose() {
     this.setState({
       open: false,
@@ -302,7 +405,7 @@ export default class Membership extends React.Component {
   handleApproveHealthApplication() {
     const id = this.state.currentIdHealth;
 
-    var config = {
+    const config = {
       method: "put",
       url: `${BASE_URL}/api/health/link/${id}`,
       headers: {},
@@ -328,22 +431,12 @@ export default class Membership extends React.Component {
       method: "get",
       url: `${BASE_URL}/api/membership/`,
       headers: {
-        "Access-Control-Allow-Origin": "*", // stein
+        "Access-Control-Allow-Origin": "*",
       },
     };
 
-    const data = []; //  [{"_id":"631f375510e7ddcd8e9a0c73","first_name":"Key","last_name":"Peele","single_name":"Key","aka":"Keyl","mobile":"0718817287","email":"joe@hotmail.com","home_phone":"0985555222","work_phone":"","member_id":"00001","street_address":"Home Ground, Corner X, City Y","suburb":"Home Ground","state":"SA","dob":"1978-08-08T21:00:00.000Z","date_of_membership":"2002-12-31T21:00:00.000Z","approved":false,"__v":0},{"_id":"631f37b210e7ddcd8e9a0c75","first_name":"John","last_name":"Preston","single_name":"John","aka":"jp11","mobile":"071882121287","email":"jp@ton.com","home_phone":"04343555222","work_phone":"32323","member_id":"00002","street_address":"24 XY Street","suburb":"XY","state":"SP","dob":"1988-08-08T20:00:00.000Z","date_of_membership":"2003-01-04T21:00:00.000Z","approved":true,"__v":0}];
     const res = [];
-    for (let i = 0; i < data.length; i++) {
-      res.push(
-        createData(
-          i + 1,
-          data[i],
-          this.handleViewApplication,
-          this.handleApproveApplication
-        )
-      );
-    }
+
     this.setState(
       {
         members: res,
@@ -405,7 +498,7 @@ export default class Membership extends React.Component {
 
     console.log(data);
 
-    var config = {
+    const config = {
       method: "put",
       url: `${BASE_URL}/api/membership/update/id/${this.state.currentId}`,
       headers: {
@@ -416,11 +509,10 @@ export default class Membership extends React.Component {
 
     axios(config)
       .then((response) => {
+        // noinspection JSIgnoredPromiseFromCall
         this.handleLoadApplications();
         alert("Success");
         console.log(JSON.stringify(response.data));
-
-        // this.handleLoadApplications();
       })
       .catch(function (error) {
         console.log(error);
@@ -431,7 +523,7 @@ export default class Membership extends React.Component {
   handleDeleteMember() {
     if (!this.state.currentId) return;
 
-    var config = {
+    const config = {
       method: "delete",
       url: `${BASE_URL}/api/membership/delete/${this.state.currentId}`,
       headers: {},
@@ -444,9 +536,9 @@ export default class Membership extends React.Component {
           currentId: null,
           currentFormData: null,
         });
+        // noinspection JSIgnoredPromiseFromCall
         this.handleLoadApplications();
         console.log(JSON.stringify(response.data));
-        // alert("Deleted");
       })
       .catch(function (error) {
         console.log(error);
@@ -464,7 +556,7 @@ export default class Membership extends React.Component {
   }
 
   handleSubmitAmount() {
-    var data = {
+    const data = {
       amount: parseInt(this.state.add_amount),
     };
 
@@ -472,7 +564,7 @@ export default class Membership extends React.Component {
       ? this.state.currentFormData.member_id
       : null;
 
-    var config = {
+    const config = {
       method: "put",
       url: `${BASE_URL}/api/membership/fund/${id}`,
       headers: {
@@ -482,7 +574,7 @@ export default class Membership extends React.Component {
     };
 
     axios(config)
-      .then(function (response) {
+      .then(function () {
         alert("Success");
       })
       .catch(function (error) {
@@ -490,17 +582,17 @@ export default class Membership extends React.Component {
         alert(error.response.data["message"]);
       })
       .finally(() => {
+        // noinspection JSIgnoredPromiseFromCall
         this.handleLoadApplications();
       });
   }
 
-  handleViewHealthAppliction(id) {
+  handleViewHealthApplication(id) {
     console.log(id);
 
     this.setState({
       currentIdHealth: id,
       openHealth: true,
-      // open: false
     });
   }
 
@@ -523,9 +615,6 @@ export default class Membership extends React.Component {
                 size="small"
                 sx={{ maxWidth: "100%", width: 320 }}
                 onChange={this.handleChangeField}
-                // InputProps={{
-                //   readOnly: false,
-                // }}
               />
             ) : (
               <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -572,7 +661,6 @@ export default class Membership extends React.Component {
 
         <Modal open={this.state.openHealth} onClose={this.handleCloseHealth}>
           <Box sx={{ ...modalStyle, maxWidth: 700 }}>
-            {/* <ApplicationForm application_id={this.state.currentId} data={this.state.currentFormData}/> */}
             <HealthViewModal
               id={this.state.currentIdHealth}
               handleApproveApplication={this.handleApproveHealthApplication}
@@ -635,7 +723,7 @@ export default class Membership extends React.Component {
                           <Grid item xs={4}>
                             <Button
                               variant="outlined"
-                              sx={{ minwidth: "100%" }}
+                              sx={{ minWidth: "100%" }}
                               onClick={this.handleSubmitAmount}
                             >
                               Add
@@ -722,7 +810,7 @@ export default class Membership extends React.Component {
                             {this.state.currentHealthData.map((h_data) => (
                               <ListItemButton
                                 onClick={() =>
-                                  this.handleViewHealthAppliction(h_data._id)
+                                  this.handleViewHealthApplication(h_data._id)
                                 }
                                 divider
                               >
@@ -730,7 +818,7 @@ export default class Membership extends React.Component {
                                   primary={`${h_data.reason} - ${
                                     h_data.linked ? "approved" : "not approved"
                                   }`}
-                                  secondary={`\$${h_data.amount} - ${formatDate(
+                                  secondary={`$${h_data.amount} - ${formatDate(
                                     h_data.date
                                   )}`}
                                 />
@@ -780,7 +868,6 @@ export default class Membership extends React.Component {
             </Grid>
           </Box>
         </Modal>
-
         <Paper
           variant="outlined"
           elevation={0}

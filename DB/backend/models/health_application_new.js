@@ -1,3 +1,11 @@
+/**
+ *  Mongoose Schema for HealthApplication model
+ *  @module models/health_application_new
+ *
+ *  @requires mongoose
+ */
+
+
 const { mongoose } = require("mongoose");
 
 const Schema = mongoose.Schema;

@@ -2,7 +2,7 @@ import React from "react";
 
 import { Box, Typography, Container } from "@mui/material";
 
-export default function Home(props) {
+export default function Home() {
   return (
     <Box>
     <Container>
