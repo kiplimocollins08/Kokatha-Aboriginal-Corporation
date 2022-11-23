@@ -17,10 +17,13 @@ const router = express.Router();
 const mail = require('../utils/mail');
 
 // Email Templates
-const SUCCESSFUL_EMAIL = "Your funding has been approved";
-const FAILED_APPLICATION_EMAIL = "You don't have enough funding.\n " +
-    "Please contact the office for further enquiries.\n" +
-    " Tel (08) 8642 2068";
+const SUCCESSFUL_EMAIL = "Dear Sir/Madam,\n\n" + "Your funding has been approved and will be paid to your account within 48hrs.\n " +
+"Please contact the office incase of further enquiries.\n" +
+"Tel (08) 8642 2068\n\n" + "Yours Sincerely,\n\n"+ "Kokatha Admin.";
+
+const FAILED_APPLICATION_EMAIL = "Dear Sir/Madam,\n\n" + "You don't have enough funding.\n " +
+    "Please contact the office for further enquiries to find out when your funds will be reallocated.\n" +
+    "Tel (08) 8642 2068\n\n" + "Yours Sincerely,\n\n"+ "Kokatha Admin.";
 
 
 /**
