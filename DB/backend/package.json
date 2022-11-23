@@ -7,7 +7,7 @@
     "start": "nodemon main.js",
     "runs": "node main.js"
   },
-  "author": "",
+  "author": "Collins Kiplimo, Bavindu Aseeshan",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
