@@ -452,7 +452,9 @@ export default class Membership extends React.Component {
       .catch(function (error) {
         console.log(error);
         alert("Error");
-      });
+      }).finally(() => {
+        this.handleLoadApplications();
+    })
   }
 
   /**

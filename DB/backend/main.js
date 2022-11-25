@@ -1,4 +1,4 @@
-// Setup local environment variables- Loads .env file contencts to process.env
+// Setup local environment variables
 require('dotenv').config()
 
 // Import relevant dependencies

@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+
 import LoadingButton from '@mui/lab/LoadingButton';
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -192,22 +193,38 @@ class AddMember extends React.Component {
                   gap: 2,
                 }}
               >
+
                 <Typography variant="subtitle1" component="div">
                   Membership Details Form
                 </Typography>
 
-                {this.state.error ? (<Alert severity="error">Invalid Data</Alert>) : null }
+                {
+                  this.state.error
+                    ?
+
+                      (<Alert severity="error">Invalid Data</Alert>)
+                      :
+                      null
+                }
+
+
                 <Grid container spacing={2} sx={{ maxWidth: 700 }}>
+
                   {this.state.form_fields.map((name) => (
+
                     <Grid item xs={12} md={6} sm={6} lg={6}>
                       <TextField
                         id={name}
                         label={titleCase(name)}
                         size="small"
-                        sx={{ maxWidth: "100%", width: 320 }}
+                        sx={{
+                          maxWidth: "100%",
+                          width: 320,
+                        }}
                         onChange={this.handleUpdateField}
                       />
                     </Grid>
+
                   ))}
                   <Grid item xs={12} md={6} sm={12} lg={6}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -216,7 +233,8 @@ class AddMember extends React.Component {
                         id="dob"
                         value={this.state.dob}
                         onChange={this.handleUpdateDate}
-                        renderInput={(params) => <TextField {...params}  size="small"  sx={{ maxWidth: "100%", width: 320 }} />}
+                        renderInput={
+                          (params) => <TextField {...params}  size="small"  sx={{ maxWidth: "100%", width: 320 }} />}
                       /> 
                     </LocalizationProvider>
                   </Grid>

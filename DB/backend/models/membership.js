@@ -30,6 +30,8 @@ const membershipSchema = new mongoose.Schema({
   },
   member_id: {
     type: String,
+    required: false,
+    unique: false
   },
   street_address: {
     required: true,

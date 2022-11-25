@@ -15,7 +15,7 @@ import { BASE_URL } from '../../config';
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 /**
- * State ful admin panel. The first tab of the admin page.
+ * Stateful admin panel. The first tab of the admin page.
  */
 export default class AdminPanel extends React.Component {
   constructor(props) {

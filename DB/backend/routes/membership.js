@@ -115,6 +115,12 @@ router.put("/update/id/:member_id", async (req, res) => {
   try {
     // Get the first member with id `id`, and update its information
     // $set, set the object's fields to the passed data
+
+    delete data["email"];
+    delete data["member_id"];
+
+    console.log(data);
+
     await MembershipModel.updateOne({id: id}, { $set: {...data }}).orFail();
     res.status(200).json({
       "message": ""

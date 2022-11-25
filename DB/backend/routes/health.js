@@ -17,13 +17,10 @@ const router = express.Router();
 const mail = require('../utils/mail');
 
 // Email Templates
-const SUCCESSFUL_EMAIL = "Dear Sir/Madam,\n\n" + "Your funding has been approved and will be paid to your account within 48hrs.\n " +
-"Please contact the office incase of further enquiries.\n" +
-"Tel (08) 8642 2068\n\n" + "Yours Sincerely,\n\n"+ "Kokatha Admin.";
-
-const FAILED_APPLICATION_EMAIL = "Dear Sir/Madam,\n\n" + "You don't have enough funding.\n " +
-    "Please contact the office for further enquiries to find out when your funds will be reallocated.\n" +
-    "Tel (08) 8642 2068\n\n" + "Yours Sincerely,\n\n"+ "Kokatha Admin.";
+const SUCCESSFUL_EMAIL = "Your funding has been approved";
+const FAILED_APPLICATION_EMAIL = "You don't have enough funding.\n " +
+    "Please contact the office for further enquiries.\n" +
+    " Tel (08) 8642 2068";
 
 
 /**
@@ -135,14 +132,20 @@ router.post('/new/apply/', async (req, res) => {
  */
 router.put("/link/:application_id", async (req, res) => {
   // noinspection JSUnresolvedVariable
+  console.log("Linking Application");
+
   const id = req.params.application_id;
   
   try{
     const data = await HealthApplicationModel.findById(id);
+    console.log("Application");
     console.log(data);
     const member = await MembershipModel.findById(data.member);
 
+    console.log("Member");
     console.log(member);
+
+    const m_id = member._id;
 
     // Check the member has enough funds in their account
     // noinspection JSUnresolvedVariable
@@ -163,16 +166,16 @@ router.put("/link/:application_id", async (req, res) => {
     await HealthApplicationModel.findOneAndUpdate(
         {_id: data._id}, // filter
         {linked: true} // set to true, approved
-    ).orFail();
+    )
     // noinspection JSUnresolvedVariable
     await MembershipModel.updateOne(
-        {member_id: m_id},
+        {id: m_id},
         {
           $inc: {
             account_balance: -data.amount
           }
         }
-    ).orFail()
+    )
 
     // Send a success email notification to the member
     // noinspection JSUnresolvedVariable
